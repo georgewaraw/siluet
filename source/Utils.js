@@ -34,7 +34,7 @@ export default Object.freeze( {
     const cache = {};
 
     return ( t, n ) => new Promise( ( r ) => cache[ n ] = cache[ n ] ||
-                         new t.FontLoader().load( `/build/assets/${ n }.json`, r ) );
+                         new t.FontLoader().load( `./build/assets/${ n }.json`, r ) );
 
   } )(),
 
