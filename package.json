@@ -1,0 +1,13 @@
+{
+  "dependencies" : {
+    "es6-tween" : "^5.5.10",
+    "three" : "^0.111.0"
+  },
+  "devDependencies" : {
+
+  },
+  "author" : "George Waraw",
+  "optionalDependencies" : {
+
+  }
+}
