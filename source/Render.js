@@ -8,10 +8,11 @@ export default ( () => {
     render = ( !three ) ? render : ( () => {
 
     const	vector2 = new three.Vector2(),
-      vector3 = new three.Vector3(),
       raycaster = new three.Raycaster();
 
-    let border = canvas.clientHeight,
+    let vector31 = new three.Vector3(),
+      vector32 = new three.Vector3(),
+      border = canvas.clientHeight,
       count = 0,
       direction = 'DOWN';
 
@@ -28,7 +29,7 @@ export default ( () => {
 
         renderer.render( scene, cameras[ 0 ] );
 
-        raycaster.set( cameras[ 0 ].getWorldPosition( vector3 ), cameras[ 0 ].getWorldDirection( vector3 ) );
+        raycaster.set( cameras[ 0 ].getWorldPosition( vector31 ), cameras[ 0 ].getWorldDirection( vector32 ) );
 
       } else {
 
