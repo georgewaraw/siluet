@@ -23,7 +23,7 @@ const shaders = ( v, m ) => Shaders( Consts.VERTEX_SHADER, Consts.UNIFORMS, v, m
 document.body.style.background = Utils.color();
 
 App.renderer( THREE, Consts.CANVAS, Consts.VR_CAPABLE );
-App.scene( THREE, Utils.color( 'dark' ) );
+App.scene( THREE, Utils.color( 'bright' ) );
 App.scene().add( App.user( THREE ) );
 App.cameras( THREE, Consts.CANVAS ).map( ( e ) => App.user().add( e ) );
 
@@ -45,7 +45,7 @@ Utils.text( THREE, 'Bender_Regular' ).then( ( f ) => App.scene().add( Meshes.tex
 App.scene().add( Meshes.floor(
 
   THREE,
-  Geos.floor( THREE, Utils.locations( Consts.LAYOUT, 'F' ), color ),
+  Geos.floor( THREE, Utils.locations( Consts.LAYOUT, 'F' ), ( () => Utils.color( 'dark', Utils.random( Consts.HUES ), true ) ) ),
   shaders( { uTime: 0, uSpeed: 0.375, uMorph: 20, uDistort: 0 }, Mats.floor( THREE ) )
 
 ) );
@@ -73,7 +73,7 @@ App.scene().add( Meshes.water(
 
   THREE,
   Geos.water( THREE, Utils.random ),
-  shaders( { uTime: 0, uSpeed: 0.125, uMorph: 200, uDistort: 2.5 }, Mats.water( THREE, Utils.color( 'bright' ) ) )
+  shaders( { uTime: 0, uSpeed: 0.125, uMorph: 200, uDistort: 2.5 }, Mats.water( THREE, Utils.color() ) )
 
 ) );
 

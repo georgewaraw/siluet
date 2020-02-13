@@ -55,9 +55,9 @@ export default ( () => {
 
       }
 
-      others.map( ( e ) =>
-          ( raycaster.intersectObject( e )[ 0 ] ) ? ( e.material.opacity > 0 ) ? e.material.opacity -= 0.01 : void 0
-                                                  : ( e.material.opacity < 1 ) ? e.material.opacity += 0.005 : void 0 );
+      others.map( ( e ) => ( raycaster.intersectObject( e.children[ 0 ] )[ 0 ] )
+        ? ( e.children[ 0 ].material.opacity > 0 ) ? e.children[ 0 ].material.opacity -= 0.01 : void 0
+        : ( e.children[ 0 ].material.opacity < 1 ) ? e.children[ 0 ].material.opacity += 0.005 : void 0 );
 
     };
 

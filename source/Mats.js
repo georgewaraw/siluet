@@ -15,7 +15,7 @@ export default Object.freeze( {
     let floor;
 
     return ( t ) => floor = ( !t ) ? floor
-      : new t.MeshLambertMaterial( { transparent: true, opacity: 0.25, vertexColors: t.FaceColors } );
+      : new t.MeshLambertMaterial( { transparent: true, opacity: 0.5, vertexColors: t.FaceColors } );
 
   } )(),
 
@@ -35,7 +35,7 @@ export default Object.freeze( {
     let others;
 
     return ( t ) => others = ( !t ) ? others : [ ...Array( 5 ) ].map( () =>
-      new t.MeshLambertMaterial( { transparent: true, opacity: 0.75, vertexColors: t.FaceColors } ) );
+      new t.MeshLambertMaterial( { depthWrite: false, transparent: true, opacity: 0.5, vertexColors: t.FaceColors } ) );
 
   } )(),
 

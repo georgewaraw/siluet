@@ -23,10 +23,15 @@ export default Object.freeze( {
 
     return ( t, g, m ) => floor = ( !t ) ? floor : ( () => {
 
+      const group = new t.Group();
+      // avoid flickering
+      group.renderOrder = Number.MAX_VALUE;
+      group.add( new t.LineSegments( new t.EdgesGeometry( g ), m ) );
       const mesh = new t.Mesh( g, m );
       mesh.receiveShadow = true;
+      group.add( mesh );
 
-      return mesh;
+      return group;
 
     } )();
 
@@ -39,10 +44,13 @@ export default Object.freeze( {
 
     return ( t, g, m ) => poles = ( !t ) ? poles : ( () => {
 
+      const group = new t.Group();
+      group.add( new t.LineSegments( new t.EdgesGeometry( g ), m ) );
       const mesh = new t.Mesh( g, m );
       mesh.receiveShadow = true;
+      group.add( mesh );
 
-      return mesh;
+      return group;
 
     } )();
 
@@ -56,16 +64,22 @@ export default Object.freeze( {
     return ( t, g, m, l, r ) => others = ( !t ) ? others : ( () => {
 
       const locations = [ ...l ];
+      let order = Number.MAX_VALUE;
 
       return [ ...Array( 5 ) ].map( ( _, i ) => {
 
+        const group = new t.Group();
+        const index = r( 0, locations.length );
+        group.position.set( locations[ index ].x, 0, locations[ index ].z );
+        locations.splice( index, 1 );
+        // avoid artifacts when looking through
+        group.renderOrder = --order;
+        group.add( new t.LineSegments( new t.EdgesGeometry( g[ i ] ), m[ i ] ) );
         const mesh = new t.Mesh( g[ i ], m[ i ] );
         mesh.castShadow = true;
-        const index = r( 0, locations.length );
-        mesh.position.set( locations[ index ].x, 0, locations[ index ].z );
-        locations.splice( index, 1 );
+        group.add( mesh );
 
-        return mesh;
+        return group;
 
       } );
 
@@ -78,7 +92,16 @@ export default Object.freeze( {
 
     let water;
 
-    return ( t, g, m ) => water = ( !t ) ? water : new t.Points( g, m );
+    return ( t, g, m ) => water = ( !t ) ? water : ( () => {
+
+      const mesh = new t.Points( g, m );
+      // X: m\ W, Z: m\ S
+      // 16.66 = 50 * 1/3
+      mesh.position.set( 16.66, 0, 16.66 );
+
+      return mesh;
+
+    } )();
 
   } )(),
 
@@ -87,7 +110,14 @@ export default Object.freeze( {
 
     let sky;
 
-    return ( t, g, m ) => sky = ( !t ) ? sky : new t.Points( g, m );
+    return ( t, g, m ) => sky = ( !t ) ? sky : ( () => {
+
+      const mesh = new t.Points( g, m );
+      mesh.position.set( 16.66, 0, 16.66 );
+
+      return mesh;
+
+    } )();
 
   } )()
 
