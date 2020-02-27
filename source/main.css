@@ -1,7 +1,8 @@
 html, body {
 
-  margin: 0.25em;
-  height: calc( 100% - 0.5em );
+  margin: 1em;
+  width: calc( 100% - 2em );
+  height: calc( 100% - 2em );
 
 }
 

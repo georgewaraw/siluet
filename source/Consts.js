@@ -10,9 +10,9 @@ export default Object.freeze( {
      FFFFFFF
     PFFFFFFFP
      FFFFFFF
-    PFF   FFP
-     FF   FF
-    PFF   FFP
+    PFF R FFP
+     FFR RFF
+    PFF R FFP
      FFFFFFF
     PFFFFFFFP
      P P P P

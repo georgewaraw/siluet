@@ -10,12 +10,12 @@ export default Object.freeze( {
 
   } )(),
 
-  // (t)hree: Lib, tile (l)ocations: Arr(NxObj(2xNum)), (c)olor: Fun
+  // (t)hree: Lib, tile (l)ocations: Arr(NxObj(2xNum))
   floor: ( () => {
 
     let floor;
 
-    return ( t, l, c ) => floor = ( !t ) ? floor : ( () => {
+    return ( t, l ) => floor = ( !t ) ? floor : ( () => {
 
       const floor = l.reduce( ( a, e ) => {
 
@@ -27,9 +27,32 @@ export default Object.freeze( {
         return a;
 
       }, new t.Geometry() );
-      floor.faces.map( ( e ) => e.color = new t.Color( c() ) );
 
       return floor;
+
+    } )();
+
+  } )(),
+
+  // (t)hree: Lib, tile (l)ocations: Arr(NxObj(2xNum))
+  room: ( () => {
+
+    let room;
+
+    return ( t, l ) => room = ( !t ) ? room : ( () => {
+
+      const room = l.reduce( ( a, e ) => {
+
+        const geometry = new t.BoxGeometry( 5, 5, 10 );
+        geometry.rotateX( 270 * Math.PI / 180 );
+        geometry.translate( e.x, 2.5, e.z );
+        a.merge( geometry );
+
+        return a;
+
+      }, new t.Geometry() );
+
+      return room;
 
     } )();
 

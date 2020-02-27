@@ -1,12 +1,17 @@
+// button: Lib, canvas: Obj, vr: Bool, renderer: Obj, user: Obj, cameras: Arr(2xObj), light: Obj, act: Fun
 export default ( () => {
 
   let events;
 
-  return ( VRButton, canvas, vr, renderer, user, cameras, light, act ) => events = ( !VRButton ) ? events : ( () => {
+  return ( button, canvas, vr, renderer, user, cameras, light, act ) => events = ( !button ) ? events : ( () => {
 
     canvas.ontouchstart = ( e ) => e.preventDefault();
 
-    window.ontouchforcechange = ( e ) => ( e.changedTouches[ 0 ].force > 0.5 ) ? window.location.reload() : void 0;
+    window.ontouchforcechange = ( e ) => {
+
+      if ( e.changedTouches[ 0 ].force > 0.5 ) window.location.reload();
+
+    };
 
     window.onorientationchange = () => window.location.reload();
 
@@ -18,8 +23,8 @@ export default ( () => {
       cameras[ 0 ].aspect = canvas.clientWidth / canvas.clientHeight;
       cameras[ 0 ].updateProjectionMatrix();
 
-      cameras[ 1 ].children[ 0 ].aspect = canvas.clientWidth / canvas.clientHeight;
-      cameras[ 1 ].children[ 0 ].updateProjectionMatrix();
+      cameras[ 1 ].aspect = canvas.clientWidth / canvas.clientHeight;
+      cameras[ 1 ].updateProjectionMatrix();
 
       renderer.setSize( canvas.clientWidth, canvas.clientHeight );
 
@@ -46,8 +51,8 @@ export default ( () => {
         if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) act( 'MOVE' );
         else if ( Math.abs( touchStartX - touchEndX ) > 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) {
 
-          if ( touchStartX - touchEndX < 0 ) act( 'TURN', 'LEFT' );
-          else act( 'TURN', 'RIGHT' );
+          if ( touchStartX - touchEndX < 0 ) act( 'TURN', 'RIGHT' );
+          else act( 'TURN', 'LEFT' );
 
         } else if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) > 0.25 ) {
 
@@ -69,7 +74,7 @@ export default ( () => {
 
         if ( x < -0.5 ) act( 'LOOK', 'RIGHT' );
         else if ( x > 0.5 ) act( 'LOOK', 'LEFT' );
-        else if ( x > -0.25 && x < 0.25 ) act( 'LOOK', 'CENTER' );
+        else act( 'LOOK', 'CENTER' );
 
         light.rotation.set( y, x, 0 );
 
@@ -157,7 +162,7 @@ export default ( () => {
 
     if ( vr ) {
 
-      document.body.appendChild( VRButton.createButton( renderer ) );
+      document.body.appendChild( button.createButton( renderer ) );
 
       const controller = renderer.vr.getController( 0 );
       controller.add( light );
@@ -165,7 +170,7 @@ export default ( () => {
 
       controller.addEventListener( 'select', () => {
 
-        if ( controller.rotation.x > 0.5 ) act( 'TURN', 'AROUND' );
+        if ( controller.rotation.x > 0.75 ) act( 'TURN', 'AROUND' );
         else {
 
           if ( controller.rotation.y < -0.5 ) act( 'TURN', 'RIGHT' );

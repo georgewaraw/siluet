@@ -5,17 +5,27 @@ export default Object.freeze( {
 
     let text;
 
-    return ( t, c ) => text = ( !t ) ? text : new t.MeshBasicMaterial( { color: c } );
+    return ( t, c ) => text = ( !t ) ? text : new t.MeshLambertMaterial( { color: c } );
 
   } )(),
 
-  // (t)hree: Lib
+  // (t)hree: Lib, (c)olor: Str
   floor: ( () => {
 
     let floor;
 
-    return ( t ) => floor = ( !t ) ? floor
-      : new t.MeshLambertMaterial( { transparent: true, opacity: 0.5, vertexColors: t.FaceColors } );
+    return ( t, c ) => floor = ( !t ) ? floor
+      : new t.MeshLambertMaterial( { transparent: true, opacity: 0.5, color: c } );
+
+  } )(),
+
+  // (t)hree: Lib, (c)olor: Str
+  room: ( () => {
+
+    let room;
+
+    return ( t, c ) => room = ( !t ) ? room
+      : new t.MeshLambertMaterial( { depthWrite: false, transparent: true, opacity: 0.5, color: c } );
 
   } )(),
 

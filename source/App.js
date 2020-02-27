@@ -54,9 +54,13 @@ export default Object.freeze( {
 
     return ( t, c ) => cameras = ( !t ) ? cameras : ( () => {
 
-      const cameras = [ new t.PerspectiveCamera( 60, c.clientWidth / c.clientHeight, 0.1, 1000 ), new t.Object3D() ];
+      const cameras = [
+
+        new t.PerspectiveCamera( 60, c.clientWidth / c.clientHeight, 0.1, 1000 ),
+        new t.PerspectiveCamera( 60, c.clientWidth / c.clientHeight, 0.1, 1000 )
+
+      ];
       cameras[ 1 ].position.set( 0.5, 0, 0 );
-      cameras[ 1 ].add( cameras[ 0 ].clone() );
 
       return cameras;
 

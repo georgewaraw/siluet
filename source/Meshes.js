@@ -7,10 +7,12 @@ export default Object.freeze( {
 
     return ( t, g, m ) => text = ( !t ) ? text : ( () => {
 
-      const mesh = new t.Mesh( g, m );
-      mesh.position.set( -0.25, 0, -1 );
+      const group = new t.Group();
+      group.position.set( -0.25, 0, -1 );
+      group.add( new t.LineSegments( new t.EdgesGeometry( g ), m ) );
+      group.add( new t.Mesh( g, m ) );
 
-      return mesh;
+      return group;
 
     } )();
 
@@ -26,6 +28,27 @@ export default Object.freeze( {
       const group = new t.Group();
       // avoid flickering
       group.renderOrder = Number.MAX_VALUE;
+      group.add( new t.LineSegments( new t.EdgesGeometry( g ), m ) );
+      const mesh = new t.Mesh( g, m );
+      mesh.receiveShadow = true;
+      group.add( mesh );
+
+      return group;
+
+    } )();
+
+  } )(),
+
+  // (t)hree: Lib, (g)eometry: Obj, (m)aterial: Obj
+  room: ( () => {
+
+    let room;
+
+    return ( t, g, m ) => room = ( !t ) ? room : ( () => {
+
+      const group = new t.Group();
+      // avoid artifacts when looking through
+      group.renderOrder = Number.MAX_VALUE - 1;
       group.add( new t.LineSegments( new t.EdgesGeometry( g ), m ) );
       const mesh = new t.Mesh( g, m );
       mesh.receiveShadow = true;
@@ -56,7 +79,7 @@ export default Object.freeze( {
 
   } )(),
 
-  // (t)hree: Lib, (g)eometry: Arr(5xObj), (m)aterial: Obj, tile (l)ocations: Arr(NxObj(2xNum)), (r)andom: Fun
+  // (t)hree: Lib, (g)eometries: Arr(5xObj), (m)aterials: Arr(5xObj), tile (l)ocations: Arr(NxObj(2xNum)), (r)andom: Fun
   others: ( () => {
 
     let others;
@@ -64,7 +87,7 @@ export default Object.freeze( {
     return ( t, g, m, l, r ) => others = ( !t ) ? others : ( () => {
 
       const locations = [ ...l ];
-      let order = Number.MAX_VALUE;
+      let order = Number.MAX_VALUE - 1;
 
       return [ ...Array( 5 ) ].map( ( _, i ) => {
 
@@ -113,7 +136,7 @@ export default Object.freeze( {
     return ( t, g, m ) => sky = ( !t ) ? sky : ( () => {
 
       const mesh = new t.Points( g, m );
-      mesh.position.set( 16.66, 0, 16.66 );
+      mesh.position.set( 16.66, 4, 16.66 );
 
       return mesh;
 

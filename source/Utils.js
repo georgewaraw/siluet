@@ -16,7 +16,7 @@ export default Object.freeze( {
 
     const cache = {};
 
-    const color = ( b, h ) => ( b === 'dark' ) ? `hsl( ${ h }, 10%, 10% )`
+    const color = ( b, h ) => ( b === 'dark' ) ? `hsl( ${ h }, 50%, 10% )`
                                                : ( b === 'bright' ) ? `hsl( ${ h }, 25%, 75% )`
                                                                     : `hsl( ${ h }, 50%, 50% )`;
 

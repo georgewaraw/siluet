@@ -26,8 +26,11 @@ export default ( () => {
       animate( user.rotation, { y: ( user.rotation.y + t * Math.PI / 180 ).toFixed( 4 ) }, d );
 
     // (x)-coordinate, (z)-coordinate, (o)bject, (t)o
-    const move = ( x, z, o, t ) =>
-      tiles.map( ( e ) => ( x === e.x && z === e.z ) ? animate( o.position, t, 375 ) : void 0 );
+    const move = ( x, z, o, t ) => tiles.map( ( e ) => {
+
+      if ( x === e.x && z === e.z ) animate( o.position, t, 375 );
+
+    } );
 
     // (o)bject, (d)irection
     const traverse = ( o, d ) => {

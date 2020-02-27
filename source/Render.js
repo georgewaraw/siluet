@@ -1,5 +1,5 @@
-// three: Lib, tween: Lib, vr: Bool, canvas: Obj, renderer: Obj, scene: Obj, cameras: Arr(Obj, Obj),
-//   shaders: Arr(NxObj), light: Obj, others: Arr(5xObj)
+// three: Lib, tween: Lib, vr: Bool, canvas: Obj, renderer: Obj, scene: Obj, cameras: Arr(2xObj), shaders: Arr(NxObj),
+//   light: Obj, others: Arr(5xObj)
 export default ( () => {
 
   let render;
@@ -13,8 +13,7 @@ export default ( () => {
     let vector31 = new three.Vector3(),
       vector32 = new three.Vector3(),
       border = canvas.clientHeight,
-      count = 0,
-      direction = 'DOWN';
+      pass = 1;
 
     // (t)ime
     return ( t ) => {
@@ -33,21 +32,27 @@ export default ( () => {
 
       } else {
 
-        renderer.setScissor( 0, 0, canvas.clientWidth, border );
-        renderer.render( scene, cameras[ 0 ] );
-        renderer.setScissor( 0, border, canvas.clientWidth, canvas.clientHeight );
-        renderer.render( scene, cameras[ 1 ].children[ 0 ] );
+        if ( pass % 2 ) {
 
-        if ( direction === 'DOWN' ) {
+          renderer.setScissor( 0, 0, canvas.clientWidth, border );
+          renderer.render( scene, cameras[ 0 ] );
+          renderer.setScissor( 0, border, canvas.clientWidth, canvas.clientHeight );
+          renderer.render( scene, cameras[ 1 ] );
 
-          border -= canvas.clientHeight / 500;
-          if ( border < canvas.clientHeight - canvas.clientHeight / 5 )
-            ( ++count % 2 ) ? direction = 'UP' : border = canvas.clientHeight;
+        } else {
 
-        } else if ( direction === 'UP' ) {
+          renderer.setScissor( 0, 0, canvas.clientWidth, border );
+          renderer.render( scene, cameras[ 1 ] );
+          renderer.setScissor( 0, border, canvas.clientWidth, canvas.clientHeight );
+          renderer.render( scene, cameras[ 0 ] );
 
-          border += canvas.clientHeight / 500;
-          if ( border > canvas.clientHeight ) direction = 'DOWN';
+        }
+
+        border -= canvas.clientHeight / 375;
+        if ( border < 0 ) {
+
+          border = canvas.clientHeight;
+          pass++;
 
         }
 
@@ -55,9 +60,18 @@ export default ( () => {
 
       }
 
-      others.map( ( e ) => ( raycaster.intersectObject( e.children[ 0 ] )[ 0 ] )
-        ? ( e.children[ 0 ].material.opacity > 0 ) ? e.children[ 0 ].material.opacity -= 0.01 : void 0
-        : ( e.children[ 0 ].material.opacity < 1 ) ? e.children[ 0 ].material.opacity += 0.005 : void 0 );
+      others.map( ( e ) => {
+
+        const object = e.children[ 0 ];
+
+        if ( raycaster.intersectObject( object )[ 0 ] ) {
+
+          // nesting `if` avoids flickering
+          if ( object.material.opacity > 0 ) object.material.opacity -= 0.01;
+
+        } else if ( object.material.opacity < 1 ) object.material.opacity += 0.005;
+
+      } );
 
     };
 
