@@ -1,101 +1,166 @@
 import * as THREE from 'three';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import TWEEN from 'es6-tween';
+
+import Constants from './Constants.js';
+import Utilities from './Utilities.js';
+import Game from './Game.js';
+import Title from './Title.js';
+import Sea from './Sea.js';
+import Sky from './Sky.js';
+import Floor from './Floor.js';
+import Columns from './Columns.js';
+import Shape from './Shape.js';
+import Others from './Others.js';
+import Skull from './Skull.js';
+import Gun from './Gun.js';
 import Act from './Act.js';
-import App from './App.js';
-import Consts from './Consts.js';
 import Events from './Events.js';
-import Geos from './Geos.js';
-import Lights from './Lights.js';
-import Mats from './Mats.js';
-import Meshes from './Meshes.js';
 import Render from './Render.js';
-import Shaders from './Shaders.js';
-import Utils from './Utils.js';
 
-Utils.color( 'dark', Utils.random( Consts.HUES ) );
-Utils.color( 'normal', Utils.random( Consts.HUES ) );
-Utils.color( 'bright', Utils.random( Consts.HUES ) );
+Utilities.getColor( 'dark', Constants.HUES[ 0 ] );
+Utilities.getColor( 'normal', Constants.HUES[ 0 ] );
+Utilities.getColor( 'bright', Constants.HUES[ 0 ] );
+const setShader = ( values, material, name ) =>
+  Utilities.shader.set( Constants.VERTEX_SHADER, Constants.UNIFORMS, values, material, name );
 
-const shaders = ( v, m ) => Shaders( Consts.VERTEX_SHADER, Consts.UNIFORMS, v, m );
+document.body.style.background = Utilities.getColor( 'bright' );
 
-document.body.style.background = Utils.color( 'bright' );
+Game.renderer( THREE, Constants.CANVAS, Constants.VR_SUPPORT );
+Game.scenes( THREE, Utilities.getColor( 'bright' ) );
+Game.scenes()[ 1 ].add( Game.player( THREE ) );
+Game.player().add( Game.camera( THREE, Constants.CANVAS ) );
+Game.border( 'down', Constants.CANVAS.clientHeight / 15 );
 
-App.renderer( THREE, Consts.CANVAS, Consts.VR_CAPABLE );
-App.scene( THREE, Utils.color( 'bright' ) );
-App.scene().add( App.user( THREE ) );
-App.cameras( THREE, Consts.CANVAS ).map( ( e ) => App.user().add( e ) );
-
-Object.keys( Lights ).map( ( e ) =>
-
-  ( e === 'ambient' ) ? App.scene().add( Lights[ e ]( THREE, Utils.color( 'dark' ) ) )
-                      : App.user().add( Lights[ e ]( THREE, Utils.color() ) )
-
-);
-
-Utils.text( THREE, 'Bender_Regular' ).then( ( f ) => App.scene().add( Meshes.text(
+Utilities.getFont( THREE, 'Bender_Regular' ).then( ( font ) => Game.scenes()[ 0 ].add( Title(
 
   THREE,
-  Geos.text( THREE, f ),
-  shaders( { uTime: 0, uSpeed: 0.375, uMorph: 0.125, uDistort: 0.025 }, Mats.text( THREE, Utils.color( 'bright' ) ) )
+  font,
+  setShader,
+  Utilities.getColor()
 
 ) ) );
 
-App.scene().add( Meshes.floor(
+Sea(
 
   THREE,
-  Geos.floor( THREE, Utils.locations( Consts.LAYOUT, 'F' ) ),
-  shaders( { uTime: 0, uSpeed: 0.375, uMorph: 20, uDistort: 0 }, Mats.floor( THREE, Utils.color( 'dark' ) ) )
+  Utilities.getRandomNumber,
+  setShader,
+  Utilities.getColor( 'dark' ),
+  Utilities.getTexture( THREE, 'blue_dark' )
+
+).map( ( e, i ) => Game.scenes()[ i ].add( e ) );
+
+Sky(
+
+  THREE,
+  Utilities.getRandomNumber,
+  setShader,
+  Utilities.getColor( 'dark' ),
+  Utilities.getTexture( THREE, 'blue_light' )
+
+).map( ( e, i ) => Game.scenes()[ i ].add( e ) );
+
+Floor(
+
+  THREE,
+  Utilities.getTiles( Constants.MAP, 'F' ),
+  setShader,
+  Utilities.getColor( 'dark' ),
+  Utilities.getTexture( THREE, 'grey_dark' ),
+  Utilities.getNextNumber()
+
+).map( ( e, i ) => Game.scenes()[ i ].add( e ) );
+
+Columns(
+
+  THREE,
+  Utilities.getTiles( Constants.MAP, 'C' ),
+  Utilities.getRandomNumber,
+  setShader,
+  Utilities.getColor( 'dark' ),
+  Utilities.getTexture( THREE, 'grey_dark' )
+
+).map( ( e, i ) => Game.scenes()[ i ].add( e ) );
+
+Shape(
+
+  THREE,
+  Utilities.getTiles( Constants.MAP, 'S' ),
+  setShader,
+  Utilities.getColor( 'dark' ),
+  Utilities.getTexture( THREE, 'mix' ),
+  Utilities.getNextNumber()
+
+).map( ( e, i ) => Game.scenes()[ i ].add( e ) );
+
+Others(
+
+  THREE,
+  setShader,
+  Utilities.getRandomNumber,
+  Utilities.getColor( 'dark' ),
+  [ ...Utilities.getTiles( Constants.MAP, 'F' ) ]
+
+).map( ( e ) => Game.scenes()[ 0 ].add( e ) );
+
+Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => Game.scenes()[ 1 ].add( Skull(
+
+  THREE,
+  setShader,
+  Utilities.getTexture( THREE, 'grey_dark' ),
+  geometry.scale( 0.05, 0.05, 0.05 )
+
+) ) );
+
+Game.player().add( Gun(
+
+  THREE,
+  setShader,
+  [ Utilities.getTexture( THREE, 'grey_dark' ), Utilities.getTexture( THREE, 'blue_light' ) ]
 
 ) );
 
-App.scene().add( Meshes.room(
+Act(
+
+  TWEEN,
+  Game.player(),
+  Utilities.getTiles( Constants.MAP, 'F' ),
+  Others(),
+  Utilities.getRandomNumber,
+  Game.border(),
+  Constants.CANVAS
+
+);
+
+Events(
+
+  VRButton,
+  Constants.CANVAS,
+  Game.camera(),
+  Game.renderer(),
+  Game.border(),
+  Constants.VR_SUPPORT,
+  Act(),
+  Gun(),
+  Game.player()
+
+);
+
+Render(
 
   THREE,
-  Geos.room( THREE, Utils.locations( Consts.LAYOUT, 'R' ) ),
-  shaders( { uTime: 0, uSpeed: 0.375, uMorph: 50, uDistort: 10 }, Mats.room( THREE, Utils.color( 'dark' ) ) )
+  TWEEN,
+  Utilities.shader.get,
+  Constants.VR_SUPPORT,
+  Gun(),
+  Others(),
+  Game.renderer(),
+  Constants.CANVAS,
+  Game.border(),
+  Game.scenes(),
+  Game.camera()
 
-) );
-
-App.scene().add( Meshes.poles(
-
-  THREE,
-  Geos.poles( THREE, Utils.locations( Consts.LAYOUT, 'P' ),
-    ( () => Utils.color( 'dark', Utils.random( Consts.HUES ), true ) ) ),
-  shaders( { uTime: 0, uSpeed: 0.375, uMorph: 10, uDistort: 1.25 }, Mats.poles( THREE ) )
-
-) );
-
-Meshes.others(
-
-  THREE,
-  Geos.others( THREE, ( () => Utils.color( 'bright', Utils.random( Consts.HUES ), true ) ) ),
-  Mats.others( THREE ).map( ( e ) => shaders( { uTime: 0, uSpeed: ( Utils.random( 0, 2 ) ? 0.0833 : 0.0625 ),
-    uMorph: ( Utils.random( 0, 2 ) ? 1000 : 750 ), uDistort: 1.25 }, e ) ),
-  Utils.locations( Consts.LAYOUT, 'F' ),
-  Utils.random
-
-).map( ( e ) => App.scene().add( e ) );
-
-if ( !Consts.VR_CAPABLE ) App.scene().add( Meshes.water(
-
-  THREE,
-  Geos.water( THREE, Utils.random ),
-  shaders( { uTime: 0, uSpeed: 0.125, uMorph: 200, uDistort: 2.5 }, Mats.water( THREE, Utils.color( 'dark' ) ) )
-
-) );
-
-App.scene().add( Meshes.sky(
-
-  THREE,
-  Geos.sky( THREE, Utils.random ),
-  shaders( { uTime: 0, uSpeed: 0.125, uMorph: 100, uDistort: 1.25 }, Mats.sky( THREE, Utils.color( 'dark' ) ) )
-
-) );
-
-Events( VRButton, Consts.CANVAS, Consts.VR_CAPABLE, App.renderer(), App.user(), App.cameras(), Lights.spot(),
-  Act( THREE, TWEEN, App.user(), Meshes.others(), Utils.locations( Consts.LAYOUT, 'F' ), Utils.random ) );
-
-Render( THREE, TWEEN, Consts.VR_CAPABLE, Consts.CANVAS, App.renderer(), App.scene(), App.cameras(), Shaders(),
-  Lights.spot(), Meshes.others() );
-App.renderer().setAnimationLoop( Render() );
+);
+Game.renderer().setAnimationLoop( Render() );

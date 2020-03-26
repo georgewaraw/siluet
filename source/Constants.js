@@ -3,23 +3,23 @@ export default Object.freeze( {
   CANVAS: document.querySelector( 'canvas' ),
 
   // `!navigator.activeVRDisplays` required for Firefox (desktop) compatibility
-  VR_CAPABLE: navigator.getVRDisplays && !navigator.activeVRDisplays,
+  VR_SUPPORT: navigator.getVRDisplays && !navigator.activeVRDisplays,
 
-  LAYOUT: `
+  HUES: [ 330, 346 ],
+
+  MAP: `
 
      FFFFFFF
-    PFFFFFFFP
+    CFFFFFFFC
      FFFFFFF
-    PFF R FFP
-     FFR RFF
-    PFF R FFP
+    CFF S FFC
+     FFS SFF
+    CFF S FFC
      FFFFFFF
-    PFFFFFFFP
-     P P P P
+    CFFFFFFFC
+     C C C C
 
   `,
-
-  HUES: [ 0, 31 ],
 
   UNIFORMS: `
 

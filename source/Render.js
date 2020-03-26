@@ -1,77 +1,42 @@
-// three: Lib, tween: Lib, vr: Bool, canvas: Obj, renderer: Obj, scene: Obj, cameras: Arr(2xObj), shaders: Arr(NxObj),
-//   light: Obj, others: Arr(5xObj)
 export default ( () => {
 
   let render;
 
-  return ( three, tween, vr, canvas, renderer, scene, cameras, shaders, light, others ) =>
-    render = ( !three ) ? render : ( () => {
+  return ( THREE, TWEEN, getShader, vr, gun, others, renderer, canvas, border, scenes, camera ) =>
+    render = ( !THREE ) ? render : ( () => {
 
-    const	vector2 = new three.Vector2(),
-      raycaster = new three.Raycaster();
+    const	vector2 = new THREE.Vector2(),
+      raycaster = new THREE.Raycaster();
+    let vector3_1 = new THREE.Vector3(),
+      vector3_2 = new THREE.Vector3();
 
-    let vector31 = new three.Vector3(),
-      vector32 = new three.Vector3(),
-      border = canvas.clientHeight,
-      pass = 1;
+    return ( time ) => {
 
-    // (t)ime
-    return ( t ) => {
+      time /= 1000;
 
-      t /= 1000;
+      TWEEN.update();
 
-      tween.update();
+      getShader().map( ( e ) => e.uniforms.uTime.value = time );
+      // if ( getShader( 'other_4' ) ) getShader( 'other_4' ).uniforms.uTime.value = time;
 
-      shaders.map( ( e ) => e.uniforms.uTime.value = t );
-
-      if ( vr ) {
-
-        renderer.render( scene, cameras[ 0 ] );
-
-        raycaster.set( cameras[ 0 ].getWorldPosition( vector31 ), cameras[ 0 ].getWorldDirection( vector32 ) );
-
-      } else {
-
-        if ( pass % 2 ) {
-
-          renderer.setScissor( 0, 0, canvas.clientWidth, border );
-          renderer.render( scene, cameras[ 0 ] );
-          renderer.setScissor( 0, border, canvas.clientWidth, canvas.clientHeight );
-          renderer.render( scene, cameras[ 1 ] );
-
-        } else {
-
-          renderer.setScissor( 0, 0, canvas.clientWidth, border );
-          renderer.render( scene, cameras[ 1 ] );
-          renderer.setScissor( 0, border, canvas.clientWidth, canvas.clientHeight );
-          renderer.render( scene, cameras[ 0 ] );
-
-        }
-
-        border -= canvas.clientHeight / 375;
-        if ( border < 0 ) {
-
-          border = canvas.clientHeight;
-          pass++;
-
-        }
-
-        raycaster.setFromCamera( vector2.set( -light.rotation.y, light.rotation.x - 0.25 ), cameras[ 0 ] );
-
-      }
+      if ( vr ) raycaster.set( camera.getWorldPosition( vector3_1 ), camera.getWorldDirection( vector3_2 ) );
+      else raycaster.setFromCamera( vector2.set( -gun.rotation.y, gun.rotation.x - 0.25 ), camera );
 
       others.map( ( e ) => {
 
-        const object = e.children[ 0 ];
-
-        if ( raycaster.intersectObject( object )[ 0 ] ) {
+        if ( raycaster.intersectObject( e )[ 0 ] ) {
 
           // nesting `if` avoids flickering
-          if ( object.material.opacity > 0 ) object.material.opacity -= 0.01;
+          if ( e.material.opacity > 0 ) e.material.opacity -= 0.01;
 
-        } else if ( object.material.opacity < 1 ) object.material.opacity += 0.005;
+        } else if ( e.material.opacity < 1 ) e.material.opacity += 0.005;
 
       } );
+
+      renderer.setScissor( 0, border.value, canvas.clientWidth, canvas.clientHeight );
+      renderer.render( scenes[ 0 ], camera );
+      renderer.setScissor( 0, 0, canvas.clientWidth, border.value );
+      renderer.render( scenes[ 1 ], camera );
 
     };
 

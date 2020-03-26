@@ -1,9 +1,9 @@
-// button: Lib, canvas: Obj, vr: Bool, renderer: Obj, user: Obj, cameras: Arr(2xObj), light: Obj, act: Fun
 export default ( () => {
 
   let events;
 
-  return ( button, canvas, vr, renderer, user, cameras, light, act ) => events = ( !button ) ? events : ( () => {
+  return ( VRButton, canvas, camera, renderer, border, vr, act, gun, player ) =>
+    events = ( !VRButton ) ? events : ( () => {
 
     canvas.ontouchstart = ( e ) => e.preventDefault();
 
@@ -20,13 +20,13 @@ export default ( () => {
       canvas.style.width = '100%';
       canvas.style.height = '100%';
 
-      cameras[ 0 ].aspect = canvas.clientWidth / canvas.clientHeight;
-      cameras[ 0 ].updateProjectionMatrix();
-
-      cameras[ 1 ].aspect = canvas.clientWidth / canvas.clientHeight;
-      cameras[ 1 ].updateProjectionMatrix();
+      camera.aspect = canvas.clientWidth / canvas.clientHeight;
+      camera.updateProjectionMatrix();
 
       renderer.setSize( canvas.clientWidth, canvas.clientHeight );
+
+      if ( border.position === 'down' ) border.value = canvas.clientHeight / 15;
+      else if ( border.position === 'up' ) border.value = canvas.clientHeight * 14 / 15;
 
     };
 
@@ -48,16 +48,16 @@ export default ( () => {
         const touchEndX = e.changedTouches[ 0 ].clientX / canvas.clientWidth * 2 - 1,
           touchEndY = e.changedTouches[ 0 ].clientY / canvas.clientHeight * -2 + 1;
 
-        if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) act( 'MOVE' );
+        if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) act( 'move' );
         else if ( Math.abs( touchStartX - touchEndX ) > 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) {
 
-          if ( touchStartX - touchEndX < 0 ) act( 'TURN', 'RIGHT' );
-          else act( 'TURN', 'LEFT' );
+          if ( touchStartX - touchEndX < 0 ) act( 'turn', 'left' );
+          else act( 'turn', 'right' );
 
         } else if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) > 0.25 ) {
 
-          if ( touchStartY - touchEndY < 0 ); // swipe up
-          else act( 'TURN', 'AROUND' );
+          if ( touchStartY - touchEndY < 0 ) act( 'transition' );
+          else act( 'turn', 'around' );
 
         }
 
@@ -69,14 +69,14 @@ export default ( () => {
 
       if ( !vr && Date.now() - timeThen > 250 ) {
 
-        const x = e.changedTouches[ 0 ].clientX / canvas.clientWidth * -2 + 1,
+        const x = e.changedTouches[ 0 ].clientX / canvas.clientWidth * 2 - 1,
           y = e.changedTouches[ 0 ].clientY / canvas.clientHeight * -2 + 1;
 
-        if ( x < -0.5 ) act( 'LOOK', 'RIGHT' );
-        else if ( x > 0.5 ) act( 'LOOK', 'LEFT' );
-        else act( 'LOOK', 'CENTER' );
+        if ( x < -0.5 ) act( 'look', 'right' );
+        else if ( x > 0.5 ) act( 'look', 'left' );
+        else act( 'look', 'center' );
 
-        light.rotation.set( y, x, 0 );
+        gun.rotation.set( -y, x, 0 );
 
       }
 
@@ -86,12 +86,12 @@ export default ( () => {
 
       if ( !vr ) {
 
-        if ( e.clientX < canvas.clientWidth / 4 ) act( 'TURN', 'LEFT' );
-        else if ( e.clientX > canvas.clientWidth * 3 / 4 ) act( 'TURN', 'RIGHT' );
+        if ( e.clientX < canvas.clientWidth / 4 ) act( 'turn', 'left' );
+        else if ( e.clientX > canvas.clientWidth * 3 / 4 ) act( 'turn', 'right' );
         else {
 
-          if ( e.clientY < canvas.clientHeight * 3 / 4 ) act( 'MOVE' );
-          else act( 'TURN', 'AROUND' );
+          if ( e.clientY < canvas.clientHeight * 3 / 4 ) act( 'move' );
+          else act( 'turn', 'around' );
 
         }
 
@@ -109,7 +109,7 @@ export default ( () => {
 
         case 'KeyA':
 
-          act( 'TURN', 'LEFT' );
+          act( 'turn', 'left' );
 
           break;
 
@@ -119,7 +119,7 @@ export default ( () => {
 
         case 'KeyD':
 
-          act( 'TURN', 'RIGHT' );
+          act( 'turn', 'right' );
 
           break;
 
@@ -129,7 +129,7 @@ export default ( () => {
 
         case 'KeyW':
 
-          act( 'MOVE' );
+          act( 'move' );
 
           break;
 
@@ -139,7 +139,13 @@ export default ( () => {
 
         case 'KeyS':
 
-          act( 'TURN', 'AROUND' );
+          act( 'turn', 'around' );
+
+          break;
+
+        case 'KeyG':
+
+          act( 'transition' );
 
           break;
 
@@ -152,30 +158,30 @@ export default ( () => {
       const x = ( e.clientX / canvas.clientWidth ) * 2 - 1,
         y = ( e.clientY / canvas.clientHeight ) * -2 + 1;
 
-      if ( x < -0.75 ) act( 'LOOK', 'LEFT' );
-      else if ( x > 0.75 ) act( 'LOOK', 'RIGHT' );
-      else if ( x > -0.5 && x < 0.5 ) act( 'LOOK', 'CENTER' );
+      if ( x < -0.75 ) act( 'look', 'left' );
+      else if ( x > 0.75 ) act( 'look', 'right' );
+      else if ( x > -0.5 && x < 0.5 ) act( 'look', 'center' );
 
-      light.rotation.set( y + 0.25, -x, 0 );
+      gun.rotation.set( y + 0.25, -x, 0 );
 
     };
 
     if ( vr ) {
 
-      document.body.appendChild( button.createButton( renderer ) );
+      document.body.appendChild( VRButton.createButton( renderer ) );
 
       const controller = renderer.vr.getController( 0 );
-      controller.add( light );
-      user.add( controller );
+      controller.add( gun );
+      player.add( controller );
 
       controller.addEventListener( 'select', () => {
 
-        if ( controller.rotation.x > 0.75 ) act( 'TURN', 'AROUND' );
+        if ( controller.rotation.x > 0.75 ) act( 'turn', 'around' );
         else {
 
-          if ( controller.rotation.y < -0.5 ) act( 'TURN', 'RIGHT' );
-          else if ( controller.rotation.y > 0.5 ) act( 'TURN', 'LEFT' );
-          else act( 'MOVE' );
+          if ( controller.rotation.y < -0.5 ) act( 'turn', 'right' );
+          else if ( controller.rotation.y > 0.5 ) act( 'turn', 'left' );
+          else act( 'move' );
 
         }
 

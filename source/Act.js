@@ -1,63 +1,58 @@
-// three: Lib, tween: Lib, user: Obj, others: Arr(5xObj), tiles: Arr(NxObj), random: Fun
 export default ( () => {
 
   let act;
 
-  return ( three, tween, user, others, tiles, random ) => act = ( !three ) ? act : ( () => {
+  return ( TWEEN, player, tiles, others, getRandomNumber, border, canvas ) => act = ( !TWEEN ) ? act : ( () => {
 
     let acting;
 
-    // (o)bject, (t)o, (d)uration
-    const animate = ( o, t, d ) => {
+    const animate = ( object, destination, duration ) => {
 
       acting = true;
 
-      new tween.Tween( o )
-        .to( t, d )
-        .easing( tween.Easing.Quadratic.Out )
+      new TWEEN.Tween( object )
+        .to( destination, duration )
+        .easing( TWEEN.Easing.Quadratic.Out )
         .on( 'complete', () => acting = false )
         .start();
 
     };
 
-    // (t)o, (d)uration
     // `.toFixed( 4 )` improves accuracy
-    const look = ( t, d = 375 ) =>
-      animate( user.rotation, { y: ( user.rotation.y + t * Math.PI / 180 ).toFixed( 4 ) }, d );
+    const look = ( destination, duration = 375 ) =>
+      animate( player.rotation, { y: ( player.rotation.y + destination * Math.PI / 180 ).toFixed( 4 ) }, duration );
 
-    // (x)-coordinate, (z)-coordinate, (o)bject, (t)o
-    const move = ( x, z, o, t ) => tiles.map( ( e ) => {
+    const move = ( x, z, object, destination ) => tiles.map( ( e ) => {
 
-      if ( x === e.x && z === e.z ) animate( o.position, t, 375 );
+      if ( x === e.x && z === e.z ) animate( object.position, destination, 375 );
 
     } );
 
-    // (o)bject, (d)irection
-    const traverse = ( o, d ) => {
+    const traverse = ( object, direction ) => {
 
-      switch ( d ) {
+      switch ( direction ) {
 
-        case 'NORTH':
+        case 'north':
 
-          move( o.position.x, o.position.z - 5, o, { z: o.position.z - 5 } );
-
-          break;
-
-        case 'EAST':
-
-          move( o.position.x + 5, o.position.z, o, { x: o.position.x + 5 } );
+          move( object.position.x, object.position.z - 5, object, { z: object.position.z - 5 } );
 
           break;
 
-        case 'SOUTH':
+        case 'east':
 
-          move( o.position.x, o.position.z + 5, o, { z: o.position.z + 5 } );
+          move( object.position.x + 5, object.position.z, object, { x: object.position.x + 5 } );
 
           break;
 
-        case 'WEST':
+        case 'south':
 
-          move( o.position.x - 5, o.position.z, o, { x: o.position.x - 5 } );
+          move( object.position.x, object.position.z + 5, object, { z: object.position.z + 5 } );
+
+          break;
+
+        case 'west':
+
+          move( object.position.x - 5, object.position.z, object, { x: object.position.x - 5 } );
 
           break;
 
@@ -65,66 +60,79 @@ export default ( () => {
 
     };
 
-    let looking = 'CENTER',
+    let looking = 'center',
       index = 0,
-      directions = [ 'NORTH', 'EAST', 'SOUTH', 'WEST' ];
+      directions = [ 'north', 'east', 'south', 'west' ];
 
-    // (a)ction, (d)irection
-    return ( a, d ) => {
+    return ( action, direction ) => {
 
       if ( !acting ) {
 
-        if ( a === 'LOOK' ) {
+        if ( action === 'look' ) {
 
-          if ( d === 'LEFT' && looking === 'CENTER' ) {
+          if ( direction === 'left' && looking === 'center' ) {
 
-            looking = 'LEFT';
+            looking = 'left';
             look( 30 );
 
-          } else if ( d === 'RIGHT' && looking === 'CENTER' ) {
+          } else if ( direction === 'right' && looking === 'center' ) {
 
-            looking = 'RIGHT';
+            looking = 'right';
             look( -30 );
 
-          } else if ( d === 'CENTER' ) {
+          } else if ( direction === 'center' ) {
 
-            if ( looking === 'LEFT' ) {
+            if ( looking === 'left' ) {
 
-              looking = 'CENTER';
+              looking = 'center';
               look( -30 );
 
-            } else if ( looking === 'RIGHT' ) {
+            } else if ( looking === 'right' ) {
 
-              looking = 'CENTER';
+              looking = 'center';
               look( 30 );
 
             }
 
           }
 
-        } else if ( a === 'TURN' ) {
+        } else if ( action === 'turn' ) {
 
-          if ( d === 'LEFT' ) {
+          if ( direction === 'left' ) {
 
             index = ( index - 1 < 0 ) ? index + 3 : index - 1;
             look( 90 );
 
-          } else if ( d === 'RIGHT' ) {
+          } else if ( direction === 'right' ) {
 
             index = ( index + 1 > 3 ) ? index - 3 : index + 1;
             look( -90 );
 
-          } else if ( d === 'AROUND' ) {
+          } else if ( direction === 'around' ) {
 
             index = ( index + 2 > 3 ) ? index - 2 : index + 2;
             look( -180, 500 );
 
           }
 
-        } else if ( a === 'MOVE' ) {
+        } else if ( action === 'move' ) {
 
-          traverse( user, directions[ index ] );
-          if ( acting ) others.map( ( e ) => traverse( e, directions[ random( 0, 4 ) ] ) );
+          traverse( player, directions[ index ] );
+          if ( acting ) others.map( ( e ) => traverse( e, directions[ getRandomNumber( 0, 4 ) ] ) );
+
+        } else if ( action === 'transition' ) {
+
+          if ( border.position === 'down' ) {
+
+            border.position = 'up';
+            animate( border, { value: canvas.clientHeight * 14 / 15 }, 175 );
+
+          } else if ( border.position === 'up' ) {
+
+            border.position = 'down';
+            animate( border, { value: canvas.clientHeight / 15 }, 175 );
+
+          }
 
         }
 
