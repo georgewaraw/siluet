@@ -15,6 +15,7 @@ import Shape from './Shape.js';
 import Others from './Others.js';
 import Skull from './Skull.js';
 import Gun from './Gun.js';
+import Ammo from './Ammo.js';
 import Act from './Act.js';
 import Events from './Events.js';
 import Render from './Render.js';
@@ -121,6 +122,15 @@ Game.player().add( Gun(
   [ Utilities.getTexture( THREE, 'grey_dark' ), Utilities.getTexture( THREE, 'blue_light' ) ]
 
 ) );
+
+Utilities.getFont( THREE, 'Pomeranian_Regular' ).then( ( font ) => Gun().add( Ammo(
+
+  THREE,
+  font,
+  setShader,
+  Utilities.getColor()
+
+)[ 9 ] ) );
 
 Act(
 
