@@ -48,16 +48,21 @@ export default ( () => {
         const touchEndX = e.changedTouches[ 0 ].clientX / canvas.clientWidth * 2 - 1,
           touchEndY = e.changedTouches[ 0 ].clientY / canvas.clientHeight * -2 + 1;
 
-        if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) ( player.isAiming ) ? act( 'shoot' ) : act( 'move' );
+        if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 )
+          ( player.isAiming ) ? act( 'shoot' ) : act( 'move' );
         else if ( Math.abs( touchStartX - touchEndX ) > 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) {
 
-          if ( touchStartX - touchEndX < 0 ) act( 'turn', 'left' );
-          else act( 'turn', 'right' );
+          if ( touchStartX - touchEndX < 0 && !player.isAiming ) act( 'turn', 'left' );
+          else if ( !player.isAiming ) act( 'turn', 'right' );
 
         } else if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) > 0.25 ) {
 
-          if ( touchStartY - touchEndY < 0 ) act( 'transition' );
-          else act( 'turn', 'around' );
+          if ( touchStartY - touchEndY < 0 ) {
+
+            // nesting avoids transition
+            if ( !player.isAiming ) act( 'transition' );
+
+          } else ( player.isAiming ) ? act( 'transition' ) : act( 'turn', 'around' );
 
         }
 
@@ -86,12 +91,17 @@ export default ( () => {
 
       if ( !vr ) {
 
-        if ( e.clientX < canvas.clientWidth / 4 ) act( 'turn', 'left' );
-        else if ( e.clientX > canvas.clientWidth * 3 / 4 ) act( 'turn', 'right' );
+        if ( player.isAiming ) act( 'shoot' );
         else {
 
-          if ( e.clientY < canvas.clientHeight * 3 / 4 ) ( player.isAiming ) ? act( 'shoot' ) : act( 'move' );
-          else act( 'turn', 'around' );
+          if ( e.clientX < canvas.clientWidth / 4 ) act( 'turn', 'left' );
+          else if ( e.clientX > canvas.clientWidth * 3 / 4 ) act( 'turn', 'right' );
+          else {
+
+            if ( e.clientY < canvas.clientHeight * 3 / 4 ) act( 'move' );
+            else act( 'turn', 'around' );
+
+          }
 
         }
 
@@ -109,7 +119,7 @@ export default ( () => {
 
         case 'KeyA':
 
-          act( 'turn', 'left' );
+          if ( !player.isAiming ) act( 'turn', 'left' );
 
           break;
 
@@ -119,7 +129,7 @@ export default ( () => {
 
         case 'KeyD':
 
-          act( 'turn', 'right' );
+          if ( !player.isAiming ) act( 'turn', 'right' );
 
           break;
 
@@ -129,7 +139,7 @@ export default ( () => {
 
         case 'KeyW':
 
-          act( 'move' );
+          if ( !player.isAiming ) act( 'move' );
 
           break;
 
@@ -139,7 +149,7 @@ export default ( () => {
 
         case 'KeyS':
 
-          act( 'turn', 'around' );
+          if ( !player.isAiming ) act( 'turn', 'around' );
 
           break;
 
@@ -176,12 +186,17 @@ export default ( () => {
 
       controller.addEventListener( 'select', () => {
 
-        if ( controller.rotation.x > 0.75 ) act( 'turn', 'around' );
+        if ( player.isAiming ) act( 'shoot' );
         else {
 
-          if ( controller.rotation.y < -0.5 ) act( 'turn', 'right' );
-          else if ( controller.rotation.y > 0.5 ) act( 'turn', 'left' );
-          else act( 'move' );
+          if ( controller.rotation.x > 0.75 ) act( 'turn', 'around' );
+          else {
+
+            if ( controller.rotation.y < -0.5 ) act( 'turn', 'right' );
+            else if ( controller.rotation.y > 0.5 ) act( 'turn', 'left' );
+            else act( 'move' );
+
+          }
 
         }
 
