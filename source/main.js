@@ -123,42 +123,47 @@ Game.player().add( Gun(
 
 ) );
 
-Utilities.getFont( THREE, 'Pomeranian_Regular' ).then( ( font ) => Gun().add( Ammo(
+Utilities.getFont( THREE, 'Pomeranian_Regular' ).then( ( font ) => {
 
-  THREE,
-  font,
-  setShader,
-  Utilities.getColor()
+  Gun().add( Ammo(
 
-)[ 9 ] ) );
+    THREE,
+    font,
+    setShader,
+    Utilities.getColor()
 
-Act(
+  )[ 9 ] ) ;
 
-  TWEEN,
-  Game.player(),
-  Utilities.getTiles( Constants.MAP, 'F' ),
-  Others(),
-  Utilities.getRandomNumber,
-  Game.border(),
-  Constants.CANVAS,
-  Utilities.shader.get,
-  Gun().children[ 0 ].position
+  Act(
 
-);
+    TWEEN,
+    Game.player(),
+    Utilities.getTiles( Constants.MAP, 'F' ),
+    Gun(),
+    Others(),
+    Utilities.getRandomNumber,
+    Game.border(),
+    Constants.CANVAS,
+    Utilities.shader.get,
+    Ammo()
 
-Events(
+  );
 
-  VRButton,
-  Constants.CANVAS,
-  Game.camera(),
-  Game.renderer(),
-  Game.border(),
-  Constants.VR_SUPPORT,
-  Game.player(),
-  Act(),
-  Gun()
+  Events(
 
-);
+    VRButton,
+    Constants.CANVAS,
+    Game.camera(),
+    Game.renderer(),
+    Game.border(),
+    Constants.VR_SUPPORT,
+    Game.player(),
+    Act(),
+    Gun()
+
+  );
+
+} );
 
 Render(
 

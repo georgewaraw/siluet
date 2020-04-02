@@ -2,7 +2,7 @@ export default ( () => {
 
   let act;
 
-  return ( TWEEN, player, tiles, others, getRandomNumber, border, canvas, getShader, gunTopPosition ) =>
+  return ( TWEEN, player, tiles, gun, others, getRandomNumber, border, canvas, getShader, ammo ) =>
     act = ( !TWEEN ) ? act : ( () => {
 
     let acting;
@@ -63,7 +63,12 @@ export default ( () => {
 
     let looking = 'center',
       index = 0,
-      directions = [ 'north', 'east', 'south', 'west' ];
+      directions = [ 'north', 'east', 'south', 'west' ],
+      ammoCount = ammo.length - 1;
+
+    const animateGun = new TWEEN.Tween( gun.children[ 0 ].position )
+      .to( { z: [ 0.1, 0 ] }, 375 )
+      .easing( TWEEN.Easing.Quadratic.InOut );
 
     return ( action, direction ) => {
 
@@ -141,8 +146,20 @@ export default ( () => {
 
         } else if ( action === 'shoot' ) {
 
-          animate( getShader( 'gun_top' ).uniforms.uMorph, { value: [ 30, 7.5 ] }, 500 );
-          animate( gunTopPosition, { z: [ 0.1, 0 ] }, 500 );
+          acting = true;
+
+          new TWEEN.Tween( getShader( 'gun_top' ).uniforms.uMorph )
+            .to( { value: [ 30, 7.5 ] }, 375 )
+            .start();
+          animateGun.start();
+
+          new TWEEN.Tween( getShader( 'ammo' ).uniforms.uDistort )
+            .to( { value: [ 0.125, 0.01 ] }, 375 )
+            .on( 'complete', () => acting = false )
+            .start();
+          gun.remove( ammo[ ammoCount ] );
+          if ( !ammoCount ) ammoCount = 10;
+          gun.add( ammo[ --ammoCount ] );
 
         }
 
