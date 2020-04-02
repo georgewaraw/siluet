@@ -141,7 +141,8 @@ Act(
   Utilities.getRandomNumber,
   Game.border(),
   Constants.CANVAS,
-  Utilities.shader.get
+  Utilities.shader.get,
+  Gun().children[ 0 ].position
 
 );
 

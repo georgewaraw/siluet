@@ -2,7 +2,8 @@ export default ( () => {
 
   let act;
 
-  return ( TWEEN, player, tiles, others, getRandomNumber, border, canvas, getShader ) => act = ( !TWEEN ) ? act : ( () => {
+  return ( TWEEN, player, tiles, others, getRandomNumber, border, canvas, getShader, gunTopPosition ) =>
+    act = ( !TWEEN ) ? act : ( () => {
 
     let acting;
 
@@ -138,7 +139,12 @@ export default ( () => {
 
           }
 
-        } else if ( action === 'shoot' ) animate( getShader( 'gun_top' ).uniforms.uMorph, { value: [ 30, 7.5 ] }, 500 );
+        } else if ( action === 'shoot' ) {
+
+          animate( getShader( 'gun_top' ).uniforms.uMorph, { value: [ 30, 7.5 ] }, 500 );
+          animate( gunTopPosition, { z: [ 0.1, 0 ] }, 500 );
+
+        }
 
       }
 
