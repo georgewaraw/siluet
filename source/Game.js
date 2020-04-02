@@ -38,7 +38,14 @@ export default Object.freeze( {
 
     let player;
 
-    return ( THREE ) => player = ( !THREE ) ? player : new THREE.Group();
+    return ( THREE ) => player = ( !THREE ) ? player : ( () => {
+
+      const player = new THREE.Group();
+      player.isAiming = false;
+
+      return player;
+
+    } )();
 
   } )(),
 

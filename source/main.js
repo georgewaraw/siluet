@@ -140,7 +140,8 @@ Act(
   Others(),
   Utilities.getRandomNumber,
   Game.border(),
-  Constants.CANVAS
+  Constants.CANVAS,
+  Utilities.shader.get
 
 );
 
@@ -152,9 +153,9 @@ Events(
   Game.renderer(),
   Game.border(),
   Constants.VR_SUPPORT,
+  Game.player(),
   Act(),
-  Gun(),
-  Game.player()
+  Gun()
 
 );
 

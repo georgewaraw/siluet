@@ -2,7 +2,7 @@ export default ( () => {
 
   let act;
 
-  return ( TWEEN, player, tiles, others, getRandomNumber, border, canvas ) => act = ( !TWEEN ) ? act : ( () => {
+  return ( TWEEN, player, tiles, others, getRandomNumber, border, canvas, getShader ) => act = ( !TWEEN ) ? act : ( () => {
 
     let acting;
 
@@ -127,14 +127,18 @@ export default ( () => {
             border.position = 'up';
             animate( border, { value: canvas.clientHeight * 14 / 15 }, 175 );
 
+            player.isAiming = true;
+
           } else if ( border.position === 'up' ) {
 
             border.position = 'down';
             animate( border, { value: canvas.clientHeight / 15 }, 175 );
 
+            player.isAiming = false;
+
           }
 
-        }
+        } else if ( action === 'shoot' ) animate( getShader( 'gun_top' ).uniforms.uMorph, { value: [ 30, 7.5 ] }, 500 );
 
       }
 
