@@ -12,8 +12,7 @@ import Sky from './Sky.js';
 import Floor from './Floor.js';
 import Columns from './Columns.js';
 import Shape from './Shape.js';
-import Others from './Others.js';
-import Skull from './Skull.js';
+import Skulls from './Skulls.js';
 import Gun from './Gun.js';
 import Ammo from './Ammo.js';
 import Act from './Act.js';
@@ -96,88 +95,91 @@ Shape(
 
 ).map( ( e, i ) => Game.scenes()[ i ].add( e ) );
 
-Others(
+Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
 
-  THREE,
-  setShader,
-  Utilities.getRandomNumber,
-  Utilities.getColor( 'dark' ),
-  [ ...Utilities.getTiles( Constants.MAP, 'F' ) ]
-
-).map( ( e ) => Game.scenes()[ 0 ].add( e ) );
-
-Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => Game.scenes()[ 1 ].add( Skull(
-
-  THREE,
-  setShader,
-  Utilities.getTexture( THREE, 'grey_dark' ),
-  geometry.scale( 0.05, 0.05, 0.05 )
-
-) ) );
-
-Game.player().add( Gun(
-
-  THREE,
-  setShader,
-  [ Utilities.getTexture( THREE, 'grey_dark' ), Utilities.getTexture( THREE, 'blue_light' ) ]
-
-) );
-
-Utilities.getFont( THREE, 'Pomeranian_Regular' ).then( ( font ) => {
-
-  Gun().add( Ammo(
+  Skulls(
 
     THREE,
-    font,
+    geometry.scale( 0.05, 0.05, 0.05 ),
     setShader,
-    Utilities.getColor()
-
-  )[ 9 ] ) ;
-
-  Act(
-
-    TWEEN,
-    Game.player(),
-    Utilities.getTiles( Constants.MAP, 'F' ),
-    Gun(),
-    Others(),
     Utilities.getRandomNumber,
-    Game.border(),
-    Constants.CANVAS,
+    Utilities.getColor( 'dark' ),
+    Utilities.getTexture( THREE, 'grey_dark' ),
+    [ ...Utilities.getTiles( Constants.MAP, 'F' ) ]
+
+  ).map( ( e ) => e.map( ( e, i ) => {
+
+    if ( i ) e.rotation.y = Utilities.getRandomNumber( 0, 5 ) * 72;
+    Game.scenes()[ i ].add( e );
+
+  } ) );
+
+  Game.player().add( Gun(
+
+    THREE,
+    setShader,
+    [ Utilities.getTexture( THREE, 'grey_dark' ), Utilities.getTexture( THREE, 'blue_light' ) ]
+
+  ) );
+
+  Utilities.getFont( THREE, 'Pomeranian_Regular' ).then( ( font ) => {
+
+    Gun().add( Ammo(
+
+      THREE,
+      font,
+      setShader,
+      Utilities.getColor()
+
+    )[ 9 ] ) ;
+
+    Act(
+
+      TWEEN,
+      Game.player(),
+      Utilities.getTiles( Constants.MAP, 'F' ),
+      Gun(),
+      Skulls(),
+      Utilities.getRandomNumber,
+      Game.border(),
+      Constants.CANVAS,
+      Utilities.shader.get,
+      Ammo()
+
+    );
+
+    Events(
+
+      VRButton,
+      Constants.CANVAS,
+      Game.camera(),
+      Game.renderer(),
+      Game.border(),
+      Constants.VR_SUPPORT,
+      Game.player(),
+      Act(),
+      Gun()
+
+    );
+
+  } );
+
+  Render(
+
+    THREE,
+    TWEEN,
     Utilities.shader.get,
-    Ammo()
-
-  );
-
-  Events(
-
-    VRButton,
-    Constants.CANVAS,
-    Game.camera(),
-    Game.renderer(),
-    Game.border(),
     Constants.VR_SUPPORT,
-    Game.player(),
-    Act(),
-    Gun()
+    Gun(),
+    Skulls().map( ( e ) => e[ 1 ] ),
+    [ ...Array( 5 ) ].map( () => Utilities.getRandomNumber( 5, 10 ) ),
+    Game.renderer(),
+    Constants.CANVAS,
+    Game.border(),
+    Game.scenes(),
+    Game.camera()
 
   );
+  Game.renderer().setAnimationLoop( Render() );
 
 } );
-
-Render(
-
-  THREE,
-  TWEEN,
-  Utilities.shader.get,
-  Constants.VR_SUPPORT,
-  Gun(),
-  Others(),
-  Game.renderer(),
-  Constants.CANVAS,
-  Game.border(),
-  Game.scenes(),
-  Game.camera()
-
-);
-Game.renderer().setAnimationLoop( Render() );

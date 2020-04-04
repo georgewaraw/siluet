@@ -2,7 +2,7 @@ export default ( () => {
 
   let act;
 
-  return ( TWEEN, player, tiles, gun, others, getRandomNumber, border, canvas, getShader, ammo ) =>
+  return ( TWEEN, player, tiles, gun, skulls, getRandomNumber, border, canvas, getShader, ammo ) =>
     act = ( !TWEEN ) ? act : ( () => {
 
     let acting;
@@ -124,7 +124,12 @@ export default ( () => {
         } else if ( action === 'move' ) {
 
           traverse( player, directions[ index ] );
-          if ( acting ) others.map( ( e ) => traverse( e, directions[ getRandomNumber( 0, 4 ) ] ) );
+          if ( acting ) skulls.map( ( e ) => {
+
+            const randomNumber = getRandomNumber( 0, 4 )
+            e.map( ( e ) => traverse( e, directions[ randomNumber ] ) );
+
+          } );
 
         } else if ( action === 'transition' ) {
 

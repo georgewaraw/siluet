@@ -2,7 +2,7 @@ export default ( () => {
 
   let render;
 
-  return ( THREE, TWEEN, getShader, vr, gun, others, renderer, canvas, border, scenes, camera ) =>
+  return ( THREE, TWEEN, getShader, vr, gun, skulls, randomNumbers, renderer, canvas, border, scenes, camera ) =>
     render = ( !THREE ) ? render : ( () => {
 
     const	vector2 = new THREE.Vector2(),
@@ -17,12 +17,14 @@ export default ( () => {
       TWEEN.update();
 
       getShader().map( ( e ) => e.uniforms.uTime.value = time );
-      // if ( getShader( 'other_4' ) ) getShader( 'other_4' ).uniforms.uTime.value = time;
+      // if ( getShader( 'floor_textured' ) ) getShader( 'floor_textured' ).uniforms.uTime.value = time;
 
       if ( vr ) raycaster.set( camera.getWorldPosition( vector3_1 ), camera.getWorldDirection( vector3_2 ) );
       else raycaster.setFromCamera( vector2.set( -gun.rotation.y, gun.rotation.x - 0.25 ), camera );
 
-      others.map( ( e ) => {
+      skulls.map( ( e, i ) => {
+
+        e.rotation.y = time / randomNumbers[ i ];
 
         if ( raycaster.intersectObject( e )[ 0 ] ) {
 

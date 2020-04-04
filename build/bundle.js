@@ -51295,12 +51295,14 @@
     };
   })();
 
-  var Others = (function () {
-    var others;
-    return function (THREE, setShader, getRandomNumber, color, tiles) {
-      return others = !THREE ? others : _toConsumableArray(Array(5)).map(function (_, i) {
-        var geometry = new THREE.SphereBufferGeometry(1.125, 16, 16);
-        var material = setShader({
+  var Skulls = (function () {
+    var skulls;
+    return function (THREE, geometry, setShader, getRandomNumber, color, texture, tiles) {
+      return skulls = !THREE ? skulls : _toConsumableArray(Array(5)).map(function (_, i) {
+        var geometries = [new THREE.EdgesGeometry(new THREE.SphereBufferGeometry(1.125, 16, 16)), new THREE.EdgesGeometry(geometry)];
+        geometries[1].rotateX(270 * Math.PI / 180);
+        geometries[1].translate(0, -2.5, 0);
+        var materials = [setShader({
           uTime: 0,
           uSpeed: getRandomNumber(0, 2) ? 0.0833 : 0.0625,
           uMorph: getRandomNumber(0, 2) ? 1000 : 750,
@@ -51308,21 +51310,7 @@
         }, new THREE.MeshBasicMaterial({
           transparent: true,
           color: color
-        }), "other_".concat(i));
-        var object = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), material);
-        var index = getRandomNumber(0, tiles.length);
-        object.position.set(tiles[index].x, 0, tiles[index].z);
-        tiles.splice(index, 1);
-        return object;
-      });
-    };
-  })();
-
-  var Skull = (function () {
-    var skull;
-    return function (THREE, setShader, texture, geometry) {
-      return skull = !THREE ? skull : function () {
-        var material = setShader({
+        }), "skull_".concat(i, "_colored")), setShader({
           uTime: 0,
           uSpeed: 0.25,
           uMorph: 10,
@@ -51331,12 +51319,15 @@
           transparent: true,
           opacity: 0.5,
           map: texture
-        }), 'skull');
-        var object = new THREE.Mesh(new THREE.EdgesGeometry(geometry), material);
-        object.rotation.set(270 * Math.PI / 180, 0, 0);
-        object.position.set(10, -2.5, 0);
-        return object;
-      }();
+        }), "skull_".concat(i, "_textured"))];
+        var objects = [new THREE.LineSegments(geometries[0], materials[0]), new THREE.Mesh(geometries[1], materials[1])];
+        var index = getRandomNumber(0, tiles.length);
+        objects.map(function (e) {
+          return e.position.set(tiles[index].x, 0, tiles[index].z);
+        });
+        tiles.splice(index, 1);
+        return objects;
+      });
     };
   })();
 
@@ -51408,7 +51399,7 @@
 
   var Act = (function () {
     var act;
-    return function (TWEEN, player, tiles, gun, others, getRandomNumber, border, canvas, getShader, ammo) {
+    return function (TWEEN, player, tiles, gun, skulls, getRandomNumber, border, canvas, getShader, ammo) {
       return act = !TWEEN ? act : function () {
         var acting;
 
@@ -51499,8 +51490,11 @@
               }
             } else if (action === 'move') {
               traverse(player, directions[index]);
-              if (acting) others.map(function (e) {
-                return traverse(e, directions[getRandomNumber(0, 4)]);
+              if (acting) skulls.map(function (e) {
+                var randomNumber = getRandomNumber(0, 4);
+                e.map(function (e) {
+                  return traverse(e, directions[randomNumber]);
+                });
               });
             } else if (action === 'transition') {
               if (border.position === 'down') {
@@ -51662,7 +51656,7 @@
 
   var Render = (function () {
     var render;
-    return function (THREE, TWEEN, getShader, vr, gun, others, renderer, canvas, border, scenes, camera) {
+    return function (THREE, TWEEN, getShader, vr, gun, skulls, randomNumbers, renderer, canvas, border, scenes, camera) {
       return render = !THREE ? render : function () {
         var vector2 = new THREE.Vector2(),
             raycaster = new THREE.Raycaster();
@@ -51673,10 +51667,12 @@
           TWEEN.update();
           getShader().map(function (e) {
             return e.uniforms.uTime.value = time;
-          }); // if ( getShader( 'other_4' ) ) getShader( 'other_4' ).uniforms.uTime.value = time;
+          }); // if ( getShader( 'floor_textured' ) ) getShader( 'floor_textured' ).uniforms.uTime.value = time;
 
           if (vr) raycaster.set(camera.getWorldPosition(vector3_1), camera.getWorldDirection(vector3_2));else raycaster.setFromCamera(vector2.set(-gun.rotation.y, gun.rotation.x - 0.25), camera);
-          others.map(function (e) {
+          skulls.map(function (e, i) {
+            e.rotation.y = time / randomNumbers[i];
+
             if (raycaster.intersectObject(e)[0]) {
               // nesting `if` avoids flickering
               if (e.material.opacity > 0) e.material.opacity -= 0.01;
@@ -51723,19 +51719,25 @@
   Shape$1(THREE$1, Utilities.getTiles(Constants.MAP, 'S'), setShader, Utilities.getColor('dark'), Utilities.getTexture(THREE$1, 'mix'), Utilities.getNextNumber()).map(function (e, i) {
     return Game.scenes()[i].add(e);
   });
-  Others(THREE$1, setShader, Utilities.getRandomNumber, Utilities.getColor('dark'), _toConsumableArray(Utilities.getTiles(Constants.MAP, 'F'))).map(function (e) {
-    return Game.scenes()[0].add(e);
-  });
   Utilities.getSTL(STLLoader, 'skull').then(function (geometry) {
-    return Game.scenes()[1].add(Skull(THREE$1, setShader, Utilities.getTexture(THREE$1, 'grey_dark'), geometry.scale(0.05, 0.05, 0.05)));
+    Skulls(THREE$1, geometry.scale(0.05, 0.05, 0.05), setShader, Utilities.getRandomNumber, Utilities.getColor('dark'), Utilities.getTexture(THREE$1, 'grey_dark'), _toConsumableArray(Utilities.getTiles(Constants.MAP, 'F'))).map(function (e) {
+      return e.map(function (e, i) {
+        if (i) e.rotation.y = Utilities.getRandomNumber(0, 5) * 72;
+        Game.scenes()[i].add(e);
+      });
+    });
+    Game.player().add(Gun(THREE$1, setShader, [Utilities.getTexture(THREE$1, 'grey_dark'), Utilities.getTexture(THREE$1, 'blue_light')]));
+    Utilities.getFont(THREE$1, 'Pomeranian_Regular').then(function (font) {
+      Gun().add(Ammo(THREE$1, font, setShader, Utilities.getColor())[9]);
+      Act(TWEEN, Game.player(), Utilities.getTiles(Constants.MAP, 'F'), Gun(), Skulls(), Utilities.getRandomNumber, Game.border(), Constants.CANVAS, Utilities.shader.get, Ammo());
+      Events(VRButton, Constants.CANVAS, Game.camera(), Game.renderer(), Game.border(), Constants.VR_SUPPORT, Game.player(), Act(), Gun());
+    });
+    Render(THREE$1, TWEEN, Utilities.shader.get, Constants.VR_SUPPORT, Gun(), Skulls().map(function (e) {
+      return e[1];
+    }), _toConsumableArray(Array(5)).map(function () {
+      return Utilities.getRandomNumber(5, 10);
+    }), Game.renderer(), Constants.CANVAS, Game.border(), Game.scenes(), Game.camera());
+    Game.renderer().setAnimationLoop(Render());
   });
-  Game.player().add(Gun(THREE$1, setShader, [Utilities.getTexture(THREE$1, 'grey_dark'), Utilities.getTexture(THREE$1, 'blue_light')]));
-  Utilities.getFont(THREE$1, 'Pomeranian_Regular').then(function (font) {
-    Gun().add(Ammo(THREE$1, font, setShader, Utilities.getColor())[9]);
-    Act(TWEEN, Game.player(), Utilities.getTiles(Constants.MAP, 'F'), Gun(), Others(), Utilities.getRandomNumber, Game.border(), Constants.CANVAS, Utilities.shader.get, Ammo());
-    Events(VRButton, Constants.CANVAS, Game.camera(), Game.renderer(), Game.border(), Constants.VR_SUPPORT, Game.player(), Act(), Gun());
-  });
-  Render(THREE$1, TWEEN, Utilities.shader.get, Constants.VR_SUPPORT, Gun(), Others(), Game.renderer(), Constants.CANVAS, Game.border(), Game.scenes(), Game.camera());
-  Game.renderer().setAnimationLoop(Render());
 
 }());
