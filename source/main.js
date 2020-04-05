@@ -31,6 +31,7 @@ Game.renderer( THREE, Constants.CANVAS, Constants.VR_SUPPORT );
 Game.scenes( THREE, Utilities.getColor( 'bright' ) );
 Game.scenes()[ 1 ].add( Game.player( THREE ) );
 Game.player().add( Game.camera( THREE, Constants.CANVAS ) );
+Game.raycaster( THREE );
 Game.border( 'down', Constants.CANVAS.clientHeight / 15 );
 
 Utilities.getFont( THREE, 'Bender_Regular' ).then( ( font ) => Game.scenes()[ 0 ].add( Title(
@@ -144,7 +145,9 @@ Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
       Game.border(),
       Constants.CANVAS,
       Utilities.shader.get,
-      Ammo()
+      Ammo(),
+      Game.raycaster(),
+      Game.scenes()
 
     );
 
@@ -170,6 +173,7 @@ Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
     TWEEN,
     Utilities.shader.get,
     Constants.VR_SUPPORT,
+    Game.raycaster(),
     Gun(),
     Skulls(),
     [ ...Array( 5 ) ].map( () => Utilities.getRandomNumber( 5, 10 ) ),

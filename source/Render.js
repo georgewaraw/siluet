@@ -2,11 +2,10 @@ export default ( () => {
 
   let render;
 
-  return ( THREE, TWEEN, getShader, vr, gun, skulls, randomNumbers, renderer, canvas, border, scenes, camera ) =>
-    render = ( !THREE ) ? render : ( () => {
+  return ( THREE, TWEEN, getShader, vr, raycaster, gun, skulls, randomNumbers, renderer, canvas, border, scenes,
+    camera ) => render = ( !THREE ) ? render : ( () => {
 
-    const	vector2 = new THREE.Vector2(),
-      raycaster = new THREE.Raycaster();
+    const	vector2 = new THREE.Vector2();
     let vector3_1 = new THREE.Vector3(),
       vector3_2 = new THREE.Vector3();
 

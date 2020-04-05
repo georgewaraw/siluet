@@ -2,7 +2,7 @@ export default ( () => {
 
   let act;
 
-  return ( TWEEN, player, tiles, gun, skulls, getRandomNumber, border, canvas, getShader, ammo ) =>
+  return ( TWEEN, player, tiles, gun, skulls, getRandomNumber, border, canvas, getShader, ammo, raycaster, scenes ) =>
     act = ( !TWEEN ) ? act : ( () => {
 
     let acting;
@@ -165,6 +165,24 @@ export default ( () => {
           gun.remove( ammo[ ammoCount ] );
           if ( !ammoCount ) ammoCount = 10;
           gun.add( ammo[ --ammoCount ] );
+
+          skulls.map( ( e, i ) => {
+
+            const shader = getShader( `skull_${ i }_textured` );
+            if ( shader && raycaster.intersectObject( e[ 0 ] )[ 0 ] ) {
+
+              shader.uniforms.uDistort.value += 0.5;
+              if ( shader.uniforms.uDistort.value > 2 ) {
+
+                scenes[ 1 ].remove( e[ 1 ] );
+                scenes[ 0 ].remove( e[ 0 ] );
+                scenes[ 0 ].add( e[ 1 ] );
+
+              }
+
+            }
+
+          } );
 
         }
 

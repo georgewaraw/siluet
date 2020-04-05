@@ -58,6 +58,14 @@ export default Object.freeze( {
 
   } )(),
 
+  raycaster: ( () => {
+
+    let raycaster;
+
+    return ( THREE ) => raycaster = ( !THREE ) ? raycaster : new THREE.Raycaster();
+
+  } )(),
+
   border: ( () => {
 
     let border;
