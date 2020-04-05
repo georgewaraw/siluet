@@ -23,12 +23,12 @@ export default ( () => {
 
       skulls.map( ( e, i ) => {
 
-        e.rotation.y = time / randomNumbers[ i ];
+        e[ 1 ].rotation.y += 0.01 / randomNumbers[ i ];
 
         const shader = getShader( `skull_${ i }_textured` );
         if ( shader ) {
 
-          if ( raycaster.intersectObject( e )[ 0 ] ) {
+          if ( raycaster.intersectObject( e[ 0 ] )[ 0 ] ) {
 
             if ( shader.uniforms.uMorph.value < 100 ) shader.uniforms.uMorph.value += 1;
 

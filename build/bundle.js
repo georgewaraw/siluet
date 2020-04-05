@@ -51670,11 +51670,11 @@
           });
           if (vr) raycaster.set(camera.getWorldPosition(vector3_1), camera.getWorldDirection(vector3_2));else raycaster.setFromCamera(vector2.set(-gun.rotation.y, gun.rotation.x - 0.25), camera);
           skulls.map(function (e, i) {
-            e.rotation.y = time / randomNumbers[i];
+            e[1].rotation.y += 0.01 / randomNumbers[i];
             var shader = getShader("skull_".concat(i, "_textured"));
 
             if (shader) {
-              if (raycaster.intersectObject(e)[0]) {
+              if (raycaster.intersectObject(e[0])[0]) {
                 if (shader.uniforms.uMorph.value < 100) shader.uniforms.uMorph.value += 1;
               } else if (shader.uniforms.uMorph.value > 50) shader.uniforms.uMorph.value -= 1;
             }
@@ -51733,9 +51733,7 @@
       Act(TWEEN, Game.player(), Utilities.getTiles(Constants.MAP, 'F'), Gun(), Skulls(), Utilities.getRandomNumber, Game.border(), Constants.CANVAS, Utilities.shader.get, Ammo());
       Events(VRButton, Constants.CANVAS, Game.camera(), Game.renderer(), Game.border(), Constants.VR_SUPPORT, Game.player(), Act(), Gun());
     });
-    Render(THREE$1, TWEEN, Utilities.shader.get, Constants.VR_SUPPORT, Gun(), Skulls().map(function (e) {
-      return e[0];
-    }), _toConsumableArray(Array(5)).map(function () {
+    Render(THREE$1, TWEEN, Utilities.shader.get, Constants.VR_SUPPORT, Gun(), Skulls(), _toConsumableArray(Array(5)).map(function () {
       return Utilities.getRandomNumber(5, 10);
     }), Game.renderer(), Constants.CANVAS, Game.border(), Game.scenes(), Game.camera());
     Game.renderer().setAnimationLoop(Render());
