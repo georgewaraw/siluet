@@ -77,11 +77,15 @@ export default ( () => {
         const x = e.changedTouches[ 0 ].clientX / canvas.clientWidth * 2 - 1,
           y = e.changedTouches[ 0 ].clientY / canvas.clientHeight * -2 + 1;
 
-        if ( x < -0.5 ) act( 'look', 'right' );
-        else if ( x > 0.5 ) act( 'look', 'left' );
-        else act( 'look', 'center' );
-
         gun.rotation.set( -y, x, 0 );
+
+        if ( !player.isAiming ) {
+
+          if ( x < -0.5 ) act( 'look', 'right' );
+          else if ( x > 0.5 ) act( 'look', 'left' );
+          else act( 'look', 'center' );
+
+        }
 
       }
 
@@ -168,11 +172,15 @@ export default ( () => {
       const x = ( e.clientX / canvas.clientWidth ) * 2 - 1,
         y = ( e.clientY / canvas.clientHeight ) * -2 + 1;
 
-      if ( x < -0.75 ) act( 'look', 'left' );
-      else if ( x > 0.75 ) act( 'look', 'right' );
-      else if ( x > -0.5 && x < 0.5 ) act( 'look', 'center' );
-
       gun.rotation.set( y + 0.25, -x, 0 );
+
+      if ( !player.isAiming ) {
+
+        if ( x < -0.75 ) act( 'look', 'left' );
+        else if ( x > 0.75 ) act( 'look', 'right' );
+        else if ( x > -0.5 && x < 0.5 ) act( 'look', 'center' );
+
+      }
 
     };
 
