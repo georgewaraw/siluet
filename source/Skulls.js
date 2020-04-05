@@ -26,7 +26,7 @@ export default ( () => {
       ),
       setShader(
 
-        { uTime: 0, uSpeed: 0.25, uMorph: 10, uDistort: 0.1 },
+        { uTime: 0, uSpeed: 0.25, uMorph: 50, uDistort: 0.1 },
         new THREE.MeshBasicMaterial( { transparent: true, opacity: 0.5, map: texture } ),
         `skull_${ i }_textured`
 

@@ -171,7 +171,7 @@ Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
     Utilities.shader.get,
     Constants.VR_SUPPORT,
     Gun(),
-    Skulls().map( ( e ) => e[ 1 ] ),
+    Skulls().map( ( e ) => e[ 0 ] ),
     [ ...Array( 5 ) ].map( () => Utilities.getRandomNumber( 5, 10 ) ),
     Game.renderer(),
     Constants.CANVAS,

@@ -17,7 +17,6 @@ export default ( () => {
       TWEEN.update();
 
       getShader().map( ( e ) => e.uniforms.uTime.value = time );
-      // if ( getShader( 'floor_textured' ) ) getShader( 'floor_textured' ).uniforms.uTime.value = time;
 
       if ( vr ) raycaster.set( camera.getWorldPosition( vector3_1 ), camera.getWorldDirection( vector3_2 ) );
       else raycaster.setFromCamera( vector2.set( -gun.rotation.y, gun.rotation.x - 0.25 ), camera );
@@ -26,12 +25,16 @@ export default ( () => {
 
         e.rotation.y = time / randomNumbers[ i ];
 
-        if ( raycaster.intersectObject( e )[ 0 ] ) {
+        const shader = getShader( `skull_${ i }_textured` );
+        if ( shader ) {
 
-          // nesting `if` avoids flickering
-          if ( e.material.opacity > 0 ) e.material.opacity -= 0.01;
+          if ( raycaster.intersectObject( e )[ 0 ] ) {
 
-        } else if ( e.material.opacity < 1 ) e.material.opacity += 0.005;
+            if ( shader.uniforms.uMorph.value < 100 ) shader.uniforms.uMorph.value += 1;
+
+          } else if ( shader.uniforms.uMorph.value > 50 ) shader.uniforms.uMorph.value -= 1;
+
+        }
 
       } );
 

@@ -51313,7 +51313,7 @@
         }), "skull_".concat(i, "_colored")), setShader({
           uTime: 0,
           uSpeed: 0.25,
-          uMorph: 10,
+          uMorph: 50,
           uDistort: 0.1
         }, new THREE.MeshBasicMaterial({
           transparent: true,
@@ -51667,16 +51667,17 @@
           TWEEN.update();
           getShader().map(function (e) {
             return e.uniforms.uTime.value = time;
-          }); // if ( getShader( 'floor_textured' ) ) getShader( 'floor_textured' ).uniforms.uTime.value = time;
-
+          });
           if (vr) raycaster.set(camera.getWorldPosition(vector3_1), camera.getWorldDirection(vector3_2));else raycaster.setFromCamera(vector2.set(-gun.rotation.y, gun.rotation.x - 0.25), camera);
           skulls.map(function (e, i) {
             e.rotation.y = time / randomNumbers[i];
+            var shader = getShader("skull_".concat(i, "_textured"));
 
-            if (raycaster.intersectObject(e)[0]) {
-              // nesting `if` avoids flickering
-              if (e.material.opacity > 0) e.material.opacity -= 0.01;
-            } else if (e.material.opacity < 1) e.material.opacity += 0.005;
+            if (shader) {
+              if (raycaster.intersectObject(e)[0]) {
+                if (shader.uniforms.uMorph.value < 100) shader.uniforms.uMorph.value += 1;
+              } else if (shader.uniforms.uMorph.value > 50) shader.uniforms.uMorph.value -= 1;
+            }
           });
           renderer.setScissor(0, border.value, canvas.clientWidth, canvas.clientHeight);
           renderer.render(scenes[0], camera);
@@ -51733,7 +51734,7 @@
       Events(VRButton, Constants.CANVAS, Game.camera(), Game.renderer(), Game.border(), Constants.VR_SUPPORT, Game.player(), Act(), Gun());
     });
     Render(THREE$1, TWEEN, Utilities.shader.get, Constants.VR_SUPPORT, Gun(), Skulls().map(function (e) {
-      return e[1];
+      return e[0];
     }), _toConsumableArray(Array(5)).map(function () {
       return Utilities.getRandomNumber(5, 10);
     }), Game.renderer(), Constants.CANVAS, Game.border(), Game.scenes(), Game.camera());
