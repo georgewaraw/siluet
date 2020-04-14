@@ -1,9 +1,24 @@
 {
-  "dependencies": {
-    "es6-tween": "^5.5.11",
-    "three": "^0.111.0"
+  "name": "@waraw/siluet",
+  "version": "0.1.0",
+  "description": "Three.js game demo",
+  "browser": "build/bundle.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {},
-  "author": "George Waraw",
-  "optionalDependencies": {}
+  "repository": "github:georgewaraw/siluet",
+  "keywords": [
+    "Three.js",
+    "game",
+    "demo"
+  ],
+  "author": "George Waraw <georgewaraw@gmail.com>",
+  "license": "MIT",
+  "bugs": "https://github.com/georgewaraw/siluet/issues",
+  "homepage": "https://github.com/georgewaraw/siluet#readme",
+  "devDependencies": {
+    "es6-tween": "^5.5.11",
+    "howler": "^2.1.3",
+    "three": "^0.115.0"
+  }
 }
