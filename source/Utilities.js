@@ -142,6 +142,33 @@ export default Object.freeze( {
 
     } );
 
+  } )(),
+
+  playSound: ( () => {
+
+    const cache = {};
+
+    return ( name, THREE, listener, loop ) => {
+
+      if ( cache[ name ] ) {
+
+        if ( !cache[ name ].isPlaying ) cache[ name ].play();
+
+      } else {
+
+        cache[ name ] = new THREE.Audio( listener );
+        new THREE.AudioLoader().load( `./build/assets/${ name }.mp3`, ( b ) => {
+
+          cache[ name ].setBuffer( b );
+          if ( loop ) cache[ name ].setLoop( true );
+          cache[ name ].play();
+
+        } );
+
+      }
+
+    };
+
   } )()
 
 } );
