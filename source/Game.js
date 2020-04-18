@@ -72,6 +72,21 @@ export default Object.freeze( {
 
     return ( position, value ) => border = ( !position ) ? border : { position, value };
 
+  } )(),
+
+  listener: ( () => {
+
+    let listener;
+
+    return ( THREE, camera ) => listener = ( !THREE ) ? listener : ( () => {
+
+      const listener = new THREE.AudioListener();
+      camera.add( listener );
+
+      return listener;
+
+    } )();
+
   } )()
 
 } );

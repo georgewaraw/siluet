@@ -41,6 +41,8 @@ export default ( () => {
 
     };
 
+    let initialized;
+
     window.ontouchend = ( e ) => {
 
       if ( !vr && Date.now() - timeThen < 250 ) {
@@ -49,7 +51,18 @@ export default ( () => {
           touchEndY = e.changedTouches[ 0 ].clientY / canvas.clientHeight * -2 + 1;
 
         if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 )
-          ( player.isAiming ) ? act( 'shoot' ) : act( 'move' );
+          ( player.isAiming ) ? act( 'shoot' ) : ( () => {
+
+            if ( !initialized ) {
+
+              initialized = true;
+              act( 'initialize' );
+
+            }
+
+            act( 'move' );
+
+          } )();
         else if ( Math.abs( touchStartX - touchEndX ) > 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) {
 
           if ( touchStartX - touchEndX < 0 && !player.isAiming ) act( 'turn', 'left' );
@@ -92,6 +105,13 @@ export default ( () => {
     };
 
     window.onmousedown = ( e ) => {
+
+      if ( !initialized ) {
+
+        initialized = true;
+        act( 'initialize' );
+
+      }
 
       if ( !vr ) {
 
