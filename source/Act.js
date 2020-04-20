@@ -130,10 +130,14 @@ export default ( () => {
         } else if ( action === 'move' ) {
 
           traverse( player, directions[ index ] );
-          if ( acting ) skulls.map( ( e ) => {
+          if ( acting ) skulls.map( ( e, i ) => {
 
-            const randomNumber = getRandomNumber( 0, 4 )
-            e.map( ( e ) => traverse( e, directions[ randomNumber ] ) );
+            if ( !scenes[ 0 ].getObjectByName( `skull_${ i }` ) ) {
+
+              const randomNumber = getRandomNumber( 0, 4 )
+              e.map( ( e ) => traverse( e, directions[ randomNumber ] ) );
+
+            }
 
           } );
 
