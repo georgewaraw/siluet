@@ -40,6 +40,7 @@ export default ( () => {
       new THREE.Mesh( geometries[ 1 ], materials[ 1 ] )
 
     ];
+    objects[ 1 ].name = `skull_${ i }`;
     const index = getRandomNumber( 0, tiles.length );
     objects.map( ( e ) => e.position.set( tiles[ index ].x, 0, tiles[ index ].z ) );
     tiles.splice( index, 1 );

@@ -174,15 +174,19 @@ export default ( () => {
 
           skulls.map( ( e, i ) => {
 
-            const shader = getShader( `skull_${ i }_textured` );
-            if ( shader && raycaster.intersectObject( e[ 0 ] )[ 0 ] ) {
+            if ( !scenes[ 0 ].getObjectByName( `skull_${ i }` ) ) {
 
-              shader.uniforms.uDistort.value += 0.5;
-              if ( shader.uniforms.uDistort.value > 2 ) {
+              const shader = getShader( `skull_${ i }_textured` );
+              if ( shader && raycaster.intersectObject( e[ 0 ] )[ 0 ] ) {
 
-                scenes[ 1 ].remove( e[ 1 ] );
-                scenes[ 0 ].remove( e[ 0 ] );
-                scenes[ 0 ].add( e[ 1 ] );
+                shader.uniforms.uDistort.value += 0.5;
+                if ( shader.uniforms.uDistort.value > 2 ) {
+
+                  scenes[ 1 ].remove( e[ 1 ] );
+                  scenes[ 0 ].remove( e[ 0 ] );
+                  scenes[ 0 ].add( e[ 1 ] );
+
+                }
 
               }
 
