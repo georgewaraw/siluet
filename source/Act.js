@@ -2,8 +2,8 @@ export default ( () => {
 
   let act;
 
-  return ( TWEEN, player, tiles, gun, listener, THREE, camera, playSound, skulls, getRandomNumber, border, canvas,
-    getShader, ammo, raycaster, scenes ) => act = ( !TWEEN ) ? act : ( () => {
+  return ( TWEEN, player, tiles, gun, listener, THREE, camera, playSound, audioAnalyser, skulls, getRandomNumber,
+    border, canvas, getShader, ammo, raycaster, scenes ) => act = ( !TWEEN ) ? act : ( () => {
 
     let acting;
 
@@ -75,7 +75,8 @@ export default ( () => {
       if ( action === 'initialize' ) {
 
         listener( THREE, camera );
-        playSound( 'music', THREE, listener(), true );
+        const sound = playSound( 'music', THREE, listener(), true );
+        audioAnalyser( THREE, sound );
 
       } else if ( !acting ) {
 

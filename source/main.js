@@ -144,6 +144,7 @@ Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
       THREE,
       Game.camera(),
       Utilities.playSound,
+      Game.audioAnalyser,
       Skulls(),
       Utilities.getRandomNumber,
       Game.border(),
@@ -175,6 +176,8 @@ Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
 
     THREE,
     TWEEN,
+    Game.audioAnalyser,
+    Utilities.getMappedNumber,
     Utilities.shader.get,
     Constants.VR_SUPPORT,
     Game.raycaster(),

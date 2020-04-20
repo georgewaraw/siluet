@@ -87,6 +87,14 @@ export default Object.freeze( {
 
     } )();
 
+  } )(),
+
+  audioAnalyser : ( () => {
+
+    let audioAnalyser;
+
+    return ( THREE, sound ) => audioAnalyser = ( !THREE ) ? audioAnalyser : new THREE.AudioAnalyser( sound );
+
   } )()
 
 } );

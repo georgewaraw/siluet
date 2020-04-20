@@ -12,7 +12,7 @@ export default Object.freeze( {
   getRandomNumber: ( from, to ) => Math.floor( Math.random() * ( to - from ) + from ),
 
   getMappedNumber: ( input, inputFrom, inputTo, outputFrom, outputTo ) =>
-    ( input - inputFrom ) * ( outputTo - outputFrom ) / ( inputTo - inputFrom ) + outputFrom,
+    ( input - inputFrom ) / ( inputTo - inputFrom ) * ( outputTo - outputFrom ) + outputFrom,
 
   getColor: ( () => {
 
@@ -166,6 +166,8 @@ export default Object.freeze( {
         } );
 
       }
+
+      return cache[ name ];
 
     };
 
