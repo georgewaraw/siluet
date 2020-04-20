@@ -2,13 +2,11 @@ export default ( () => {
 
   let render;
 
-  return ( THREE, TWEEN, audioAnalyser, getMappedNumber, getShader, vr, raycaster, gun, skulls, randomNumbers, renderer,
+  return ( THREE, TWEEN, audioAnalyser, getMappedNumber, getShader, raycaster, gun, skulls, randomNumbers, renderer,
     canvas, border, scenes, camera ) => render = ( !THREE ) ? render : ( () => {
 
     const	vector2 = new THREE.Vector2();
-    let amplitude,
-      vector3_1 = new THREE.Vector3(),
-      vector3_2 = new THREE.Vector3();
+    let amplitude;
 
     return ( time ) => {
 
@@ -21,8 +19,7 @@ export default ( () => {
 
       getShader().map( ( e ) => e.uniforms.uTime.value = time );
 
-      if ( vr ) raycaster.set( camera.getWorldPosition( vector3_1 ), camera.getWorldDirection( vector3_2 ) );
-      else raycaster.setFromCamera( vector2.set( -gun.rotation.y, gun.rotation.x - 0.25 ), camera );
+      raycaster.setFromCamera( vector2.set( -gun.rotation.y, gun.rotation.x - 0.25 ), camera );
 
       skulls.map( ( e, i ) => {
 

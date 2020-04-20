@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
 import TWEEN from 'es6-tween';
 
 import Constants from './Constants.js';
@@ -27,7 +26,7 @@ const setShader = ( values, material, name ) =>
 
 document.body.style.background = Utilities.getColor( 'bright' );
 
-Game.renderer( THREE, Constants.CANVAS, Constants.VR_SUPPORT );
+Game.renderer( THREE, Constants.CANVAS );
 Game.scenes( THREE, Utilities.getColor( 'bright' ) );
 Game.scenes()[ 1 ].add( Game.player( THREE ) );
 Game.player().add( Game.camera( THREE, Constants.CANVAS ) );
@@ -158,12 +157,10 @@ Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
 
     Events(
 
-      VRButton,
       Constants.CANVAS,
       Game.camera(),
       Game.renderer(),
       Game.border(),
-      Constants.VR_SUPPORT,
       Game.player(),
       Act(),
       Gun()
@@ -179,7 +176,6 @@ Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
     Game.audioAnalyser,
     Utilities.getMappedNumber,
     Utilities.shader.get,
-    Constants.VR_SUPPORT,
     Game.raycaster(),
     Gun(),
     Skulls(),

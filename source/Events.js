@@ -2,8 +2,7 @@ export default ( () => {
 
   let events;
 
-  return ( VRButton, canvas, camera, renderer, border, vr, player, act, gun ) =>
-    events = ( !VRButton ) ? events : ( () => {
+  return ( canvas, camera, renderer, border, player, act, gun ) => events = ( !canvas ) ? events : ( () => {
 
     canvas.ontouchstart = ( e ) => e.preventDefault();
 
@@ -45,25 +44,21 @@ export default ( () => {
 
     window.ontouchend = ( e ) => {
 
-      if ( !vr && Date.now() - timeThen < 250 ) {
+      if ( Date.now() - timeThen < 250 ) {
 
         const touchEndX = e.changedTouches[ 0 ].clientX / canvas.clientWidth * 2 - 1,
           touchEndY = e.changedTouches[ 0 ].clientY / canvas.clientHeight * -2 + 1;
 
-        if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 )
-          ( player.isAiming ) ? act( 'shoot' ) : ( () => {
+        if ( Math.abs( touchStartX - touchEndX ) < 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) {
 
-            if ( !initialized ) {
+          if ( !initialized ) {
 
-              initialized = true;
-              act( 'initialize' );
+            initialized = true;
+            act( 'initialize' );
 
-            }
+          } else ( player.isAiming ) ? act( 'shoot' ) : act( 'move' );
 
-            act( 'move' );
-
-          } )();
-        else if ( Math.abs( touchStartX - touchEndX ) > 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) {
+        } else if ( Math.abs( touchStartX - touchEndX ) > 0.25 && Math.abs( touchStartY - touchEndY ) < 0.25 ) {
 
           if ( touchStartX - touchEndX < 0 && !player.isAiming ) act( 'turn', 'left' );
           else if ( !player.isAiming ) act( 'turn', 'right' );
@@ -85,7 +80,7 @@ export default ( () => {
 
     window.ontouchmove = ( e ) => {
 
-      if ( !vr && Date.now() - timeThen > 250 ) {
+      if ( Date.now() - timeThen > 250 ) {
 
         const x = e.changedTouches[ 0 ].clientX / canvas.clientWidth * 2 - 1,
           y = e.changedTouches[ 0 ].clientY / canvas.clientHeight * -2 + 1;
@@ -113,19 +108,15 @@ export default ( () => {
 
       }
 
-      if ( !vr ) {
+      if ( player.isAiming ) act( 'shoot' );
+      else {
 
-        if ( player.isAiming ) act( 'shoot' );
+        if ( e.clientX < canvas.clientWidth / 4 ) act( 'turn', 'left' );
+        else if ( e.clientX > canvas.clientWidth * 3 / 4 ) act( 'turn', 'right' );
         else {
 
-          if ( e.clientX < canvas.clientWidth / 4 ) act( 'turn', 'left' );
-          else if ( e.clientX > canvas.clientWidth * 3 / 4 ) act( 'turn', 'right' );
-          else {
-
-            if ( e.clientY < canvas.clientHeight * 3 / 4 ) act( 'move' );
-            else act( 'turn', 'around' );
-
-          }
+          if ( e.clientY < canvas.clientHeight * 3 / 4 ) act( 'move' );
+          else act( 'turn', 'around' );
 
         }
 
@@ -203,34 +194,6 @@ export default ( () => {
       }
 
     };
-
-    if ( vr ) {
-
-      document.body.appendChild( VRButton.createButton( renderer ) );
-
-      const controller = renderer.vr.getController( 0 );
-      controller.add( gun );
-      player.add( controller );
-
-      controller.addEventListener( 'select', () => {
-
-        if ( player.isAiming ) act( 'shoot' );
-        else {
-
-          if ( controller.rotation.x > 0.75 ) act( 'turn', 'around' );
-          else {
-
-            if ( controller.rotation.y < -0.5 ) act( 'turn', 'right' );
-            else if ( controller.rotation.y > 0.5 ) act( 'turn', 'left' );
-            else act( 'move' );
-
-          }
-
-        }
-
-      } );
-
-    }
 
   } )();
 

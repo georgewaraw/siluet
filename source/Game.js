@@ -4,13 +4,12 @@ export default Object.freeze( {
 
     let renderer;
 
-    return ( THREE, canvas, vr ) => renderer = ( !THREE ) ? renderer : ( () => {
+    return ( THREE, canvas ) => renderer = ( !THREE ) ? renderer : ( () => {
 
       const renderer = new THREE.WebGLRenderer( { canvas } );
       renderer.setPixelRatio( 0.15 );
       renderer.setSize( canvas.clientWidth, canvas.clientHeight );
       renderer.setScissorTest( true );
-      if ( vr ) renderer.vr.enabled = true;
 
       return renderer;
 
