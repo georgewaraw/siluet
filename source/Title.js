@@ -16,6 +16,7 @@ export default ( () => {
     ];
 
     const object = new THREE.Group();
+    object.name = 'title';
     object.position.set( -0.25, 0, -1 );
     object.add( new THREE.Mesh( geometry, materials[ 0 ] ) );
     object.add( new THREE.LineSegments( geometry, materials[ 1 ] ) );

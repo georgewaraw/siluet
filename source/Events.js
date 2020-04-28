@@ -2,7 +2,7 @@ export default ( () => {
 
   let events;
 
-  return ( canvas, camera, renderer, border, player, act, gun ) => events = ( !canvas ) ? events : ( () => {
+  return ( canvas, cameras, renderer, border, player, act, gun ) => events = ( !canvas ) ? events : ( () => {
 
     canvas.ontouchstart = ( e ) => e.preventDefault();
 
@@ -19,8 +19,12 @@ export default ( () => {
       canvas.style.width = '100%';
       canvas.style.height = '100%';
 
-      camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      camera.updateProjectionMatrix();
+      cameras.map( ( e ) => {
+
+        e.aspect = canvas.clientWidth / canvas.clientHeight;
+        e.updateProjectionMatrix();
+
+      } );
 
       renderer.setSize( canvas.clientWidth, canvas.clientHeight );
 

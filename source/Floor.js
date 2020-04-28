@@ -19,7 +19,7 @@ export default ( () => {
     const materials = [
 
       setShader( values, new THREE.MeshBasicMaterial( { color } ), 'floor_colored' ),
-      setShader( values, new THREE.MeshBasicMaterial( { transparent: true, opacity: 0.5, map: texture } ),
+      setShader( values, new THREE.MeshBasicMaterial( { transparent: false, opacity: 0.75, map: texture } ),
         'floor_textured' )
 
     ];

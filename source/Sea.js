@@ -4,8 +4,8 @@ export default ( () => {
 
   return ( THREE, getRandomNumber, setShader, color, texture ) => sea = ( !THREE ) ? sea : ( () => {
 
-    const geometry = new THREE.BufferGeometry().setFromPoints( [ ...Array( 7500 ) ].map( () =>
-      new THREE.Vector3( getRandomNumber( -50, 51 ), getRandomNumber( -10, -6.5 ), getRandomNumber( -50, 51 ) ) ) );
+    const geometry = new THREE.BufferGeometry().setFromPoints( [ ...Array( 15000 ) ].map( () => new THREE.Vector3(
+      getRandomNumber( -100, 100 ), getRandomNumber( -10, -6.5 ), getRandomNumber( -100, 100 ) ) ) );
 
     const values = { uTime: 0, uSpeed: 0.125, uMorph: 200, uDistort: 2.5 };
     const materials = [
@@ -24,8 +24,8 @@ export default ( () => {
 
     ];
     // +X: m\ W, +Z: m\ S
-    // 16.66 = 50 * 1/3
-    objects.map( ( e ) => e.position.set( 16.66, 0, 16.66 ) );
+    // 33.33 = 100 / 3
+    objects.map( ( e ) => e.position.set( 33.33, 0, 33.33 ) );
 
     return objects;
 

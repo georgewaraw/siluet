@@ -1,4 +1,2 @@
 # siluet
-is a work-in-progress WebGL game demo made using [three.js](https://github.com/mrdoob/three.js) and [es6-tween](https://github.com/tweenjs/es6-tween) libraries. It supports both desktop and mobile platforms as well as most modern web browsers.
-
-Its visuals are inspired by titles found on early 3D game consoles such as PlayStation and Saturn.
+is a work-in-progress WebGL game demo made with [three.js](https://github.com/mrdoob/three.js) and [es6-tween](https://github.com/tweenjs/es6-tween). It's inspired by early 3D games on PlayStation and Saturn. It plays on desktop and mobile and supports most modern web browsers.

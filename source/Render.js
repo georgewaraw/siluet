@@ -2,11 +2,11 @@ export default ( () => {
 
   let render;
 
-  return ( THREE, TWEEN, audioAnalyser, getMappedNumber, getShader, raycaster, gun, skulls, randomNumbers, renderer,
-    canvas, border, scenes, camera ) => render = ( !THREE ) ? render : ( () => {
+  return ( THREE, TWEEN, audioAnalyser, getMappedNumber, getShader, raycaster, gun, enemies, randomNumbers, renderer,
+    canvas, border, scenes, cameras ) => render = ( !THREE ) ? render : ( () => {
 
     const	vector2 = new THREE.Vector2();
-    let amplitude;
+    let analyser;
 
     return ( time ) => {
 
@@ -14,18 +14,34 @@ export default ( () => {
 
       TWEEN.update();
 
-      if ( audioAnalyser() ) amplitude = getMappedNumber( audioAnalyser().getAverageFrequency(), 0, 255, 0, 10 );
-      if ( getShader( 'floor_textured' ) ) getShader( 'floor_textured' ).uniforms.uDistort.value = amplitude;
+      if ( analyser ) {
+
+        // if ( shaderSea ) shaderSea.uniforms.uDistort.value =
+        //   getMappedNumber( analyser.getAverageFrequency(), 0, 255, 0.125, 5 );
+        // else shaderSea = getShader( 'sea_textured' );
+
+        if ( getShader( 'sea_textured' ) ) getShader( 'sea_textured' ).uniforms.uDistort.value =
+          getMappedNumber( analyser.getAverageFrequency(), 0, 255, 2.5, 5 );
+        if ( getShader( 'sea_textured' ) ) getShader( 'sea_textured' ).uniforms.uDistort.value =
+          getMappedNumber( analyser.getAverageFrequency(), 0, 255, 1.25, 2.5 );
+        if ( getShader( 'floor_textured' ) ) getShader( 'floor_textured' ).uniforms.uDistort.value =
+          getMappedNumber( analyser.getAverageFrequency(), 0, 255, 0, 2 );
+        if ( getShader( 'columns_textured' ) ) getShader( 'columns_textured' ).uniforms.uDistort.value =
+          getMappedNumber( analyser.getAverageFrequency(), 0, 255, 1.25, 5 );
+        if ( getShader( 'shape_textured' ) ) getShader( 'shape_textured' ).uniforms.uDistort.value =
+          getMappedNumber( analyser.getAverageFrequency(), 0, 255, 10, 20 );
+
+      } else analyser = audioAnalyser();
 
       getShader().map( ( e ) => e.uniforms.uTime.value = time );
 
-      raycaster.setFromCamera( vector2.set( -gun.rotation.y, gun.rotation.x - 0.25 ), camera );
+      raycaster.setFromCamera( vector2.set( -gun.rotation.y, gun.rotation.x - 0.25 ), cameras[ 1 ] );
 
-      skulls.map( ( e, i ) => {
+      enemies.map( ( e, i ) => {
 
         e[ 1 ].rotation.y += 0.01 / randomNumbers[ i ];
 
-        const shader = getShader( `skull_${ i }_textured` );
+        const shader = getShader( `enemy_${ i }_textured` );
         if ( shader ) {
 
           if ( raycaster.intersectObject( e[ 0 ] )[ 0 ] ) {
@@ -39,9 +55,9 @@ export default ( () => {
       } );
 
       renderer.setScissor( 0, border.value, canvas.clientWidth, canvas.clientHeight );
-      renderer.render( scenes[ 0 ], camera );
+      renderer.render( scenes[ 0 ], cameras[ 0 ] );
       renderer.setScissor( 0, 0, canvas.clientWidth, border.value );
-      renderer.render( scenes[ 1 ], camera );
+      renderer.render( scenes[ 1 ], cameras[ 1 ] );
 
     };
 

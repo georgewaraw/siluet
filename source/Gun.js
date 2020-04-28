@@ -14,9 +14,9 @@ export default ( () => {
     const materials = [
 
       setShader( { uTime: 0, uSpeed: 0.25, uMorph: 7.5, uDistort: 0.025 },
-        new THREE.MeshBasicMaterial( { transparent: true, opacity: 0.5, map: textures[ 0 ] } ), 'gun_top' ),
+        new THREE.MeshBasicMaterial( { transparent: false, opacity: 0.5, map: textures[ 0 ] } ), 'gun_top' ),
       setShader( { uTime: 0, uSpeed: 0.375, uMorph: 5, uDistort: 0.01 },
-        new THREE.MeshBasicMaterial( { transparent: true, opacity: 0.5, map: textures[ 1 ] } ), 'gun_bottom' )
+        new THREE.MeshBasicMaterial( { transparent: false, opacity: 0.5, map: textures[ 1 ] } ), 'gun_bottom' )
 
     ];
 

@@ -5,13 +5,14 @@ import TWEEN from 'es6-tween';
 import Constants from './Constants.js';
 import Utilities from './Utilities.js';
 import Game from './Game.js';
+import Player from './Player.js';
 import Title from './Title.js';
 import Sea from './Sea.js';
 import Sky from './Sky.js';
 import Floor from './Floor.js';
 import Columns from './Columns.js';
 import Shape from './Shape.js';
-import Skulls from './Skulls.js';
+import Enemies from './Enemies.js';
 import Gun from './Gun.js';
 import Ammo from './Ammo.js';
 import Act from './Act.js';
@@ -28,12 +29,21 @@ document.body.style.background = Utilities.getColor( 'bright' );
 
 Game.renderer( THREE, Constants.CANVAS );
 Game.scenes( THREE, Utilities.getColor( 'bright' ) );
-Game.scenes()[ 1 ].add( Game.player( THREE ) );
-Game.player().add( Game.camera( THREE, Constants.CANVAS ) );
+Game.scenes()[ 1 ].add( Game.player( THREE, Utilities.getTiles( Constants.MAP, 'P' )[ 0 ] ) );
+Game.cameras( THREE, Constants.CANVAS, Game.player() ).map( ( e, i ) => ( i ) ? Game.player().add( e )
+                                                                              : Game.scenes()[ 0 ].add( e ) );
 Game.raycaster( THREE );
 Game.border( 'down', Constants.CANVAS.clientHeight / 15 );
 
-Utilities.getFont( THREE, 'Bender_Regular' ).then( ( font ) => Game.scenes()[ 0 ].add( Title(
+Game.cameras()[ 0 ].add( Player(
+
+  THREE,
+  setShader,
+  Utilities.getColor( 'dark' )
+
+) );
+
+Utilities.getFont( THREE, 'Bender_Regular' ).then( ( font ) => Game.player().add( Title(
 
   THREE,
   font,
@@ -58,7 +68,8 @@ Sky(
   Utilities.getRandomNumber,
   setShader,
   Utilities.getColor( 'dark' ),
-  Utilities.getTexture( THREE, 'blue_light' )
+  Utilities.getTexture( THREE, 'blue_light' ),
+  Utilities.getNextNumber()
 
 ).map( ( e, i ) => Game.scenes()[ i ].add( e ) );
 
@@ -95,11 +106,12 @@ Shape(
 
 ).map( ( e, i ) => Game.scenes()[ i ].add( e ) );
 
-Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
+Utilities.getSTL( STLLoader, 'enemy' ).then( ( geometry ) => {
 
-  Skulls(
+  Enemies(
 
     THREE,
+    Constants.ENEMY_COUNT,
     geometry.scale( 0.05, 0.05, 0.05 ),
     setShader,
     Utilities.getRandomNumber,
@@ -141,10 +153,10 @@ Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
       Gun(),
       Game.listener,
       THREE,
-      Game.camera(),
+      Game.cameras(),
       Utilities.playSound,
       Game.audioAnalyser,
-      Skulls(),
+      Enemies(),
       Utilities.getRandomNumber,
       Game.border(),
       Constants.CANVAS,
@@ -158,7 +170,7 @@ Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
     Events(
 
       Constants.CANVAS,
-      Game.camera(),
+      Game.cameras(),
       Game.renderer(),
       Game.border(),
       Game.player(),
@@ -178,13 +190,13 @@ Utilities.getSTL( STLLoader, 'skull' ).then( ( geometry ) => {
     Utilities.shader.get,
     Game.raycaster(),
     Gun(),
-    Skulls(),
+    Enemies(),
     [ ...Array( 5 ) ].map( () => Utilities.getRandomNumber( 5, 10 ) ),
     Game.renderer(),
     Constants.CANVAS,
     Game.border(),
     Game.scenes(),
-    Game.camera()
+    Game.cameras()
 
   );
   Game.renderer().setAnimationLoop( Render() );

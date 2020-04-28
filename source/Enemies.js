@@ -1,9 +1,9 @@
 export default ( () => {
 
-  let skulls;
+  let enemies;
 
-  return ( THREE, geometry, setShader, getRandomNumber, color, texture, tiles ) =>
-    skulls = ( !THREE ) ? skulls : [ ...Array( 5 ) ].map( ( _, i ) => {
+  return ( THREE, count, geometry, setShader, getRandomNumber, color, texture, tiles ) =>
+    enemies = ( !THREE ) ? enemies : [ ...Array( count ) ].map( ( _, i ) => {
 
     const geometries = [
 
@@ -20,15 +20,15 @@ export default ( () => {
 
         { uTime: 0, uSpeed: ( getRandomNumber( 0, 2 ) ? 0.0833 : 0.0625 ),
           uMorph: ( getRandomNumber( 0, 2 ) ? 1000 : 750 ), uDistort: 1.25 },
-        new THREE.MeshBasicMaterial( { transparent: true, color } ),
-        `skull_${ i }_colored`
+        new THREE.MeshBasicMaterial( { color } ),
+        `enemy_${ i }_colored`
 
       ),
       setShader(
 
         { uTime: 0, uSpeed: 0.25, uMorph: 50, uDistort: 0.1 },
-        new THREE.MeshBasicMaterial( { transparent: true, opacity: 0.5, map: texture } ),
-        `skull_${ i }_textured`
+        new THREE.MeshBasicMaterial( { transparent: true, opacity: 0.75, map: texture } ),
+        `enemy_${ i }_textured`
 
       )
 
@@ -40,7 +40,7 @@ export default ( () => {
       new THREE.Mesh( geometries[ 1 ], materials[ 1 ] )
 
     ];
-    objects[ 1 ].name = `skull_${ i }`;
+    objects[ 1 ].name = `enemy_${ i }`;
     const index = getRandomNumber( 0, tiles.length );
     objects.map( ( e ) => e.position.set( tiles[ index ].x, 0, tiles[ index ].z ) );
     tiles.splice( index, 1 );

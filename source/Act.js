@@ -2,7 +2,7 @@ export default ( () => {
 
   let act;
 
-  return ( TWEEN, player, tiles, gun, listener, THREE, camera, playSound, audioAnalyser, skulls, getRandomNumber,
+  return ( TWEEN, player, tiles, gun, listener, THREE, cameras, playSound, audioAnalyser, enemies, getRandomNumber,
     border, canvas, getShader, ammo, raycaster, scenes ) => act = ( !TWEEN ) ? act : ( () => {
 
     let acting;
@@ -20,8 +20,14 @@ export default ( () => {
     };
 
     // `.toFixed( 4 )` improves accuracy
-    const look = ( destination, duration = 375 ) =>
+    const look = ( destination, duration = 375 ) => {
+
       animate( player.rotation, { y: ( player.rotation.y + destination * Math.PI / 180 ).toFixed( 4 ) }, duration );
+      animate( cameras[ 0 ].rotation, { z: ( cameras[ 0 ].rotation.z + destination * Math.PI / 180 ).toFixed( 4 ) },
+        duration );
+
+    };
+
 
     const move = ( x, z, object, destination ) => tiles.map( ( e ) => {
 
@@ -74,7 +80,9 @@ export default ( () => {
 
       if ( action === 'initialize' ) {
 
-        listener( THREE, camera );
+        player.remove( player.getObjectByName( 'title' ) );
+
+        listener( THREE, cameras[ 1 ] );
         const sound = playSound( 'music', THREE, listener(), true );
         audioAnalyser( THREE, sound );
 
@@ -130,9 +138,10 @@ export default ( () => {
         } else if ( action === 'move' ) {
 
           traverse( player, directions[ index ] );
-          if ( acting ) skulls.map( ( e, i ) => {
+          traverse( cameras[ 0 ], directions[ index ] );
+          if ( acting ) enemies.map( ( e, i ) => {
 
-            if ( !scenes[ 0 ].getObjectByName( `skull_${ i }` ) ) {
+            if ( !scenes[ 0 ].getObjectByName( `enemy_${ i }` ) ) {
 
               const randomNumber = getRandomNumber( 0, 4 )
               e.map( ( e ) => traverse( e, directions[ randomNumber ] ) );
@@ -146,14 +155,14 @@ export default ( () => {
           if ( border.position === 'down' ) {
 
             border.position = 'up';
-            animate( border, { value: canvas.clientHeight * 14 / 15 }, 175 );
+            animate( border, { value: canvas.clientHeight * 14 / 15 }, 500 );
 
             player.isAiming = true;
 
           } else if ( border.position === 'up' ) {
 
             border.position = 'down';
-            animate( border, { value: canvas.clientHeight / 15 }, 175 );
+            animate( border, { value: canvas.clientHeight / 15 }, 500 );
 
             player.isAiming = false;
 
@@ -176,11 +185,11 @@ export default ( () => {
           if ( !ammoCount ) ammoCount = 10;
           gun.add( ammo[ --ammoCount ] );
 
-          skulls.map( ( e, i ) => {
+          enemies.map( ( e, i ) => {
 
-            if ( !scenes[ 0 ].getObjectByName( `skull_${ i }` ) ) {
+            if ( !scenes[ 0 ].getObjectByName( `enemy_${ i }` ) ) {
 
-              const shader = getShader( `skull_${ i }_textured` );
+              const shader = getShader( `enemy_${ i }_textured` );
               if ( shader && raycaster.intersectObject( e[ 0 ] )[ 0 ] ) {
 
                 shader.uniforms.uDistort.value += 0.5;

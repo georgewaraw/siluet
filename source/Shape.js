@@ -18,9 +18,9 @@ export default ( () => {
     const values = { uTime: 0, uSpeed: 0.375, uMorph: 50, uDistort: 10 };
     const materials = [
 
-      setShader( values, new THREE.MeshBasicMaterial( { color } ), 'room_colored' ),
+      setShader( values, new THREE.MeshBasicMaterial( { color } ), 'shape_colored' ),
       setShader( values, new THREE.MeshBasicMaterial( {
-        depthWrite: false, transparent: true, opacity: 0.5, map: texture } ), 'room_textured' )
+        depthWrite: false, transparent: true, opacity: 0.5, map: texture } ), 'shape_textured' )
 
     ];
 
