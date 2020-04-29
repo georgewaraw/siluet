@@ -1,7 +1,7 @@
 export default (() => {
   let floor;
 
-  return (THREE, tiles, setShader, color, map, number) => floor = (!THREE) ? floor : (() => {
+  return (THREE, tiles, setShader, color, texture, number) => floor = (!THREE) ? floor : (() => {
     const geometry = tiles.reduce((a, e) => {
       const geometry = new THREE.PlaneGeometry(5, 5);
       geometry.rotateX(270*Math.PI/180);
@@ -14,7 +14,8 @@ export default (() => {
     const values = { uTime: 0, uSpeed: 0.375, uMorph: 20, uDistort: 0 };
     const materials = [
       setShader(values, new THREE.MeshBasicMaterial({ color }), 'floor_colored'),
-      setShader(values, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.75, map }), 'floor_textured')
+      setShader(values, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.75, map: texture }),
+        'floor_textured')
     ];
 
     const objects = [

@@ -1,7 +1,7 @@
 export default (() => {
   let act;
 
-  return (TWEEN, players, tiles, gun, listener, THREE, camera, playSound, audioAnalyser, enemies, getRandomNumber,
+  return (TWEEN, players, tiles, gun, listener, THREE, cameras, playSound, audioAnalyser, enemies, getRandomNumber,
     border, canvas, getShader, ammo, raycaster, scenes) => act = (!TWEEN) ? act : (() => {
     let acting;
 
@@ -53,7 +53,7 @@ export default (() => {
       if (action === 'initialize') {
         players[1].remove(players[1].getObjectByName('title'));
 
-        listener(THREE, camera);
+        listener(THREE, cameras[1]);
         const sound = playSound('music', THREE, listener(), true);
         audioAnalyser(THREE, sound);
       } else if (!acting) {
@@ -97,11 +97,13 @@ export default (() => {
             border.position = 'up';
             animate(border, { value: canvas.clientHeight*14/15 }, 500);
 
+            animate(cameras[0].position, { y: 4 }, 500);
             players[1].isAiming = true;
           } else if (border.position === 'up') {
             border.position = 'down';
             animate(border, { value: canvas.clientHeight/15 }, 500);
 
+            animate(cameras[0].position, { y: 20 }, 500);
             players[1].isAiming = false;
           }
         } else if (action === 'shoot') {

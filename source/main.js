@@ -128,7 +128,7 @@ Utilities.getSTL(STLLoader, 'enemy').then((geometry) => {
       Gun(),
       Game.listener,
       THREE,
-      Game.cameras()[1],
+      Game.cameras(),
       Utilities.playSound,
       Game.audioAnalyser,
       Enemies(),
