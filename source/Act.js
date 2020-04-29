@@ -1,7 +1,7 @@
 export default (() => {
   let act;
 
-  return (TWEEN, player, tiles, gun, listener, THREE, cameras, playSound, audioAnalyser, enemies, getRandomNumber,
+  return (TWEEN, players, tiles, gun, listener, THREE, camera, playSound, audioAnalyser, enemies, getRandomNumber,
     border, canvas, getShader, ammo, raycaster, scenes) => act = (!TWEEN) ? act : (() => {
     let acting;
 
@@ -16,10 +16,8 @@ export default (() => {
     };
 
     // `.toFixed(4)` improves accuracy
-    const look = (destination, duration=375) => {
-      animate(player.rotation, { y: (player.rotation.y+destination*Math.PI/180).toFixed(4) }, duration);
-      animate(cameras[0].rotation, { z: (cameras[0].rotation.z+destination*Math.PI/180).toFixed(4) }, duration);
-    };
+    const look = (destination, duration=375) =>
+      players.map((e) => animate(e.rotation, { y: (e.rotation.y+destination*Math.PI/180).toFixed(4) }, duration));
 
     const move = (x, z, object, destination) => tiles.map((e) => {
       if (x === e.x && z === e.z) animate(object.position, destination, 375);
@@ -53,9 +51,9 @@ export default (() => {
 
     return (action, direction) => {
       if (action === 'initialize') {
-        player.remove(player.getObjectByName('title'));
+        players[1].remove(players[1].getObjectByName('title'));
 
-        listener(THREE, cameras[1]);
+        listener(THREE, camera);
         const sound = playSound('music', THREE, listener(), true);
         audioAnalyser(THREE, sound);
       } else if (!acting) {
@@ -87,8 +85,7 @@ export default (() => {
             look(-180, 500);
           }
         } else if (action === 'move') {
-          traverse(player, directions[index]);
-          traverse(cameras[0], directions[index]);
+          players.map((e) => traverse(e, directions[index]));
           if (acting) enemies.map((e, i) => {
             if (!scenes[0].getObjectByName(`enemy_${i}`)) {
               const randomNumber = getRandomNumber(0, 4);
@@ -100,12 +97,12 @@ export default (() => {
             border.position = 'up';
             animate(border, { value: canvas.clientHeight*14/15 }, 500);
 
-            player.isAiming = true;
+            players[1].isAiming = true;
           } else if (border.position === 'up') {
             border.position = 'down';
             animate(border, { value: canvas.clientHeight/15 }, 500);
 
-            player.isAiming = false;
+            players[1].isAiming = false;
           }
         } else if (action === 'shoot') {
           acting = true;

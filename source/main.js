@@ -4,8 +4,8 @@ import TWEEN from 'es6-tween';
 
 import Constants from './Constants.js';
 import Utilities from './Utilities.js';
+import Players from './Players.js';
 import Game from './Game.js';
-import Player from './Player.js';
 import Title from './Title.js';
 import Sea from './Sea.js';
 import Sky from './Sky.js';
@@ -29,21 +29,19 @@ document.body.style.background = Utilities.getColor('bright');
 
 Game.renderer(THREE, Constants.CANVAS);
 Game.scenes(THREE, Utilities.getColor('bright'));
-Game.scenes()[1].add(Game.player(THREE, Utilities.getTiles(Constants.MAP, 'P')[0]));
-Game.cameras(THREE, Constants.CANVAS, Game.player()).map((e, i) => (i) ? Game.player().add(e)
-                                                                       : Game.scenes()[0].add(e));
+Players(
+  THREE,
+  setShader,
+  Utilities.getColor('dark'),
+  Utilities.getTiles(Constants.MAP, 'P')[0]
+).map((e, i) => Game.scenes()[i].add(e));
+Game.cameras(THREE, Constants.CANVAS).map((e, i) => Players()[i].add(e));
 Game.raycaster(THREE);
 Game.border('down', Constants.CANVAS.clientHeight/15);
 
-Game.cameras()[0].add(Player(
+Utilities.getFont(THREE, 'Bender_Regular').then((f) => Players()[1].add(Title(
   THREE,
-  setShader,
-  Utilities.getColor('dark')
-));
-
-Utilities.getFont(THREE, 'Bender_Regular').then((font) => Game.player().add(Title(
-  THREE,
-  font,
+  f,
   setShader,
   Utilities.getColor()
 )));
@@ -109,28 +107,28 @@ Utilities.getSTL(STLLoader, 'enemy').then((geometry) => {
     Game.scenes()[i].add(e);
   }));
 
-  Game.player().add(Gun(
+  Players()[1].add(Gun(
     THREE,
     setShader,
     [Utilities.getTexture(THREE, 'grey_dark'), Utilities.getTexture(THREE, 'blue_light')]
   ));
 
-  Utilities.getFont(THREE, 'Pomeranian_Regular').then((font) => {
+  Utilities.getFont(THREE, 'Pomeranian_Regular').then((f) => {
     Gun().add(Ammo(
       THREE,
-      font,
+      f,
       setShader,
       Utilities.getColor()
     )[9]);
 
     Act(
       TWEEN,
-      Game.player(),
+      Players(),
       Utilities.getTiles(Constants.MAP, 'F'),
       Gun(),
       Game.listener,
       THREE,
-      Game.cameras(),
+      Game.cameras()[1],
       Utilities.playSound,
       Game.audioAnalyser,
       Enemies(),
@@ -148,7 +146,7 @@ Utilities.getSTL(STLLoader, 'enemy').then((geometry) => {
       Game.cameras(),
       Game.renderer(),
       Game.border(),
-      Game.player(),
+      Players()[1],
       Act(),
       Gun()
     );

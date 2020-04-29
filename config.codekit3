@@ -384,13 +384,13 @@
 		"sC": 3,
 		"tS": 1
 		},
-	"/source/Player.js": {
+	"/source/Players.js": {
 		"bF": 0,
 		"ft": 64,
 		"ma": 0,
 		"mi": 1,
 		"oA": 1,
-		"oAP": "/source/Player-min.js",
+		"oAP": "/source/Players-min.js",
 		"oF": 1,
 		"sC": 3,
 		"tS": 0
