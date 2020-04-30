@@ -42,8 +42,8 @@ export default (() => {
             act('initialize');
           } else (player.isAiming) ? act('shoot') : act('move');
         } else if (Math.abs(touchStartX-touchEndX) > 0.25 && Math.abs(touchStartY - touchEndY) < 0.25) {
-          if (touchStartX-touchEndX < 0 && !player.isAiming) act('turn', 'left');
-          else if (!player.isAiming) act('turn', 'right');
+          if (touchStartX-touchEndX < 0 && !player.isAiming) act('turn', 'right');
+          else if (!player.isAiming) act('turn', 'left');
         } else if (Math.abs(touchStartX-touchEndX) < 0.25 && Math.abs(touchStartY-touchEndY) > 0.25) {
           if (touchStartY-touchEndY < 0) {
             // nesting avoids transition
@@ -51,19 +51,21 @@ export default (() => {
           } else (player.isAiming) ? act('transition') : act('turn', 'around');
         }
       }
+
+      if (!player.isAiming) gun.rotation.set(0, 0, 0);
     };
     window.ontouchmove = (e) => {
       if (Date.now()-timeThen > 250) {
         const x = e.changedTouches[0].clientX/canvas.clientWidth*2-1,
           y = e.changedTouches[0].clientY/canvas.clientHeight*-2+1;
 
-        gun.rotation.set(-y, x, 0);
+        if (player.isAiming) {
+          if (x < -0.9) act('look', 'left');
+          else if (x > 0.9) act('look', 'right');
+          else if (x > -0.1 && x < 0.1) act('look', 'center');
 
-        if (!player.isAiming) {
-          if (x < -0.5) act('look', 'right');
-          else if (x > 0.5) act('look', 'left');
-          else act('look', 'center');
-        }
+          gun.rotation.set(y+0.25, -x, 0);
+        } else act('look', 'center');
       }
     };
 
@@ -106,12 +108,16 @@ export default (() => {
       const x = (e.clientX/canvas.clientWidth)*2-1,
         y = (e.clientY/canvas.clientHeight)*-2+1;
 
-      gun.rotation.set(y+0.25, -x, 0);
+      if (player.isAiming) {
+        if (x < -0.9) act('look', 'left');
+        else if (x > 0.9) act('look', 'right');
+        else if (x > -0.1 && x < 0.1) act('look', 'center');
 
-      if (!player.isAiming) {
-        if (x < -0.75) act('look', 'left');
-        else if (x > 0.75) act('look', 'right');
-        else if (x > -0.5 && x < 0.5) act('look', 'center');
+        gun.rotation.set(y+0.25, -x, 0);
+      } else {
+        act('look', 'center');
+
+        gun.rotation.set(0, 0, 0);
       }
     };
   })();
