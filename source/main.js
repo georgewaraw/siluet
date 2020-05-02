@@ -67,10 +67,10 @@ Sky(
 
 Floor(
   THREE,
-  Utilities.getTiles(Constants.MAP, 'F'),
+  Utilities.getTiles(Constants.MAP, 'F').concat(Utilities.getTiles(Constants.MAP, 'E')),
   setShader,
   Utilities.getColor('dark'),
-  Utilities.getTexture(THREE, 'grey_dark'),
+  Utilities.getTexture(THREE, 'grey'),
   Utilities.getNextNumber()
 ).map((e, i) => Game.scenes()[i].add(e));
 
@@ -80,7 +80,7 @@ Columns(
   Utilities.getRandomNumber,
   setShader,
   Utilities.getColor('dark'),
-  Utilities.getTexture(THREE, 'grey_dark')
+  Utilities.getTexture(THREE, 'grey')
 ).map((e, i) => Game.scenes()[i].add(e));
 
 Shape(
@@ -100,8 +100,8 @@ Utilities.getSTL(STLLoader, 'enemy').then((geometry) => {
     setShader,
     Utilities.getRandomNumber,
     Utilities.getColor('dark'),
-    Utilities.getTexture(THREE, 'grey_dark'),
-    [...Utilities.getTiles(Constants.MAP, 'F')]
+    Utilities.getTexture(THREE, 'grey'),
+    [...Utilities.getTiles(Constants.MAP, 'E')]
   ).map((e) => e.map((e, i) => {
     if (i) e.rotation.y = Utilities.getRandomNumber(0, 5)*72;
     Game.scenes()[i].add(e);
@@ -110,7 +110,7 @@ Utilities.getSTL(STLLoader, 'enemy').then((geometry) => {
   Players()[1].add(Gun(
     THREE,
     setShader,
-    [Utilities.getTexture(THREE, 'grey_dark'), Utilities.getTexture(THREE, 'blue_light')]
+    [Utilities.getTexture(THREE, 'grey'), Utilities.getTexture(THREE, 'blue_light')]
   ));
 
   Utilities.getFont(THREE, 'Pomeranian_Regular').then((f) => {
@@ -124,7 +124,7 @@ Utilities.getSTL(STLLoader, 'enemy').then((geometry) => {
     Act(
       TWEEN,
       Players(),
-      Utilities.getTiles(Constants.MAP, 'F'),
+      Utilities.getTiles(Constants.MAP, 'F').concat(Utilities.getTiles(Constants.MAP, 'E')),
       Gun(),
       Game.listener,
       THREE,

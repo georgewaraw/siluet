@@ -52,7 +52,10 @@ export default (() => {
         }
       }
 
-      if (!player.isAiming) gun.rotation.set(0, 0, 0);
+      if (!player.isAiming) {
+        gun.rotation.set(0, 0, 0);
+        gun.position.copy(gun.initials.position);
+      }
     };
     window.ontouchmove = (e) => {
       if (Date.now()-timeThen > 250) {
@@ -65,6 +68,7 @@ export default (() => {
           else if (x > -0.1 && x < 0.1) act('look', 'center');
 
           gun.rotation.set(y+0.25, -x, 0);
+          gun.position.set(x, y-0.75, -3);
         } else act('look', 'center');
       }
     };
@@ -99,7 +103,7 @@ export default (() => {
         case 'ArrowDown': case 'KeyS':
           if (!player.isAiming) act('turn', 'around');
           break;
-        case 'KeyG':
+        case 'Space': case 'KeyG':
           act('transition');
           break;
       }
@@ -114,10 +118,12 @@ export default (() => {
         else if (x > -0.1 && x < 0.1) act('look', 'center');
 
         gun.rotation.set(y+0.25, -x, 0);
+        gun.position.set(x, y-0.75, -3);
       } else {
         act('look', 'center');
 
         gun.rotation.set(0, 0, 0);
+        gun.position.copy(gun.initials.position);
       }
     };
   })();

@@ -3,7 +3,7 @@ export default (() => {
 
   return (THREE, tiles, getRandomNumber, setShader, color, texture) => columns = (!THREE) ? columns : (() => {
     const geometry = tiles.reduce((a, e) => {
-      const geometry = new THREE.CylinderGeometry(1.125, 1.125, 50, 16, 16);
+      const geometry = new THREE.CylinderGeometry(1.125, 1.125, 50, 16, 10);
       geometry.translate(e.x, -2.5, e.z);
       a.merge(geometry);
 

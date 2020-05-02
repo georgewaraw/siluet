@@ -4,7 +4,7 @@ export default (() => {
   return (THREE, TWEEN, audioAnalyser, getMappedNumber, getShader, raycaster, gun, enemies, randomNumbers, renderer,
     canvas, border, scenes, cameras) => render = (!THREE) ? render : (() => {
     const	vector2 = new THREE.Vector2();
-    let analyser;
+    let analyser, amplitude;
 
     return (time) => {
       time /= 1000;
@@ -13,16 +13,17 @@ export default (() => {
 
       getShader().map((e) => e.uniforms.uTime.value = time);
       if (analyser) {
+        amplitude = analyser.getAverageFrequency();
         if (getShader('sea_textured')) getShader('sea_textured').uniforms.uDistort.value =
-          getMappedNumber(analyser.getAverageFrequency(), 0, 255, 2.5, 5);
+          getMappedNumber(amplitude, 0, 255, 2.5, 5);
         if (getShader('sea_textured')) getShader('sea_textured').uniforms.uDistort.value =
-          getMappedNumber(analyser.getAverageFrequency(), 0, 255, 1.25, 2.5);
+          getMappedNumber(amplitude, 0, 255, 1.25, 2.5);
         if (getShader('floor_textured')) getShader('floor_textured').uniforms.uDistort.value =
-          getMappedNumber(analyser.getAverageFrequency(), 0, 255, 0, 2);
+          getMappedNumber(amplitude, 0, 255, 0, 2);
         if (getShader('columns_textured')) getShader('columns_textured').uniforms.uDistort.value =
-          getMappedNumber(analyser.getAverageFrequency(), 0, 255, 1.25, 5);
+          getMappedNumber(amplitude, 0, 255, 1.25, 5);
         if (getShader('shape_textured')) getShader('shape_textured').uniforms.uDistort.value =
-          getMappedNumber(analyser.getAverageFrequency(), 0, 255, 10, 20);
+          getMappedNumber(amplitude, 0, 255, 10, 20);
       } else analyser = audioAnalyser();
 
       raycaster.setFromCamera(vector2.set(-gun.rotation.y, gun.rotation.x-0.25), cameras[1]);

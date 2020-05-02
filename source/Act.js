@@ -90,6 +90,12 @@ export default (() => {
             if (!scenes[0].getObjectByName(`enemy_${i}`)) {
               const randomNumber = getRandomNumber(0, 4);
               e.map((e) => traverse(e, directions[randomNumber]));
+              if (e[1].position.x === players[1].position.x && e[1].position.z === players[1].position.z) {
+                --players[1].health;
+                players[0].children[0].material.opacity -= 0.375;
+                if (!players[1].health) console.log('Game over!');
+              }
+
             }
           });
         } else if (action === 'transition') {
@@ -109,32 +115,36 @@ export default (() => {
         } else if (action === 'shoot') {
           acting = true;
 
-          new TWEEN.Tween(getShader('gun_top').uniforms.uMorph)
-            .to({ value: [30, 7.5] }, 375)
-            .start();
-          animateGun.start();
-
           new TWEEN.Tween(getShader('ammo').uniforms.uDistort)
             .to({ value: [0.125, 0.01] }, 375)
             .on('complete', () => acting = false)
             .start();
           gun.remove(ammo[ammoCount]);
-          if (!ammoCount) ammoCount = 10;
-          gun.add(ammo[--ammoCount]);
-
-          enemies.map((e, i) => {
-            if (!scenes[0].getObjectByName(`enemy_${i}`)) {
-              const shader = getShader(`enemy_${i}_textured`);
-              if (shader && raycaster.intersectObject(e[0])[0]) {
-                shader.uniforms.uDistort.value += 0.5;
-                if (shader.uniforms.uDistort.value > 2) {
-                  scenes[1].remove(e[1]);
-                  scenes[0].remove(e[0]);
-                  scenes[0].add(e[1]);
+          if (!ammoCount) {
+            new TWEEN.Tween(getShader('gun_top').uniforms.uMorph)
+              .to({ value: [120, 7.5] }, 375)
+              .start();
+            ammoCount = 10;
+          } else {
+            new TWEEN.Tween(getShader('gun_top').uniforms.uMorph)
+              .to({ value: [30, 7.5] }, 375)
+              .start();
+            animateGun.start();
+            enemies.map((e, i) => {
+              if (!scenes[0].getObjectByName(`enemy_${i}`)) {
+                const shader = getShader(`enemy_${i}_textured`);
+                if (shader && raycaster.intersectObject(e[0])[0]) {
+                  shader.uniforms.uDistort.value += 0.5;
+                  if (shader.uniforms.uDistort.value > 2) {
+                    scenes[1].remove(e[1]);
+                    scenes[0].remove(e[0]);
+                    scenes[0].add(e[1]);
+                  }
                 }
               }
-            }
-          });
+            });
+          }
+          gun.add(ammo[--ammoCount]);
         }
       }
     };

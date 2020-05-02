@@ -15,7 +15,10 @@ export default (() => {
     ];
 
     const object = new THREE.Group();
-    object.position.set(0, -0.75, -3);
+    object.initials = {
+      position: new THREE.Vector3(0, -0.75, -3)
+    };
+    object.position.copy(object.initials.position);
     object.add(new THREE.Mesh(geometries[0], materials[0]));
     object.add(new THREE.Mesh(geometries[1], materials[1]));
     object.children[1].position.set(0, -0.3, 0.3);

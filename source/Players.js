@@ -20,6 +20,7 @@ export default (() => {
     objects[0].add(mesh);
     objects.map((e) => e.position.set(tile.x, 0, tile.z));
     objects[1].isAiming = false;
+    objects[1].health = 2;
 
     return objects;
   })();

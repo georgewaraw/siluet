@@ -19,7 +19,7 @@ export default (() => {
       ),
       setShader(
         { uTime: 0, uSpeed: 0.25, uMorph: 50, uDistort: 0.1 },
-        new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.75, map: texture }),
+        new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.5, map: texture }),
         `enemy_${i}_textured`
       )
     ];
