@@ -90,7 +90,7 @@ export default (() => {
       }
     };
     window.onkeydown = (e) => {
-      switch (e.code) {
+      if (initialized) switch (e.code) {
         case 'ArrowLeft': case 'KeyA':
           if (!player.isAiming) act('turn', 'left');
           break;

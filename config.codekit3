@@ -300,6 +300,17 @@
 		"sC": 3,
 		"tS": 0
 		},
+	"/source/End.js": {
+		"bF": 0,
+		"ft": 64,
+		"ma": 0,
+		"mi": 1,
+		"oA": 1,
+		"oAP": "/source/End-min.js",
+		"oF": 1,
+		"sC": 3,
+		"tS": 0
+		},
 	"/source/Enemies.js": {
 		"bF": 0,
 		"ft": 64,

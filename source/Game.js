@@ -29,7 +29,6 @@ export default Object.freeze({
       const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth/canvas.clientHeight, 0.1, 1000);
       if (!i) {
         camera.rotation.set(270*Math.PI/180, 0, 0);
-        camera.position.set(0, 20, 0);
       }
 
       return camera;

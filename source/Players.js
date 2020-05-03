@@ -21,6 +21,7 @@ export default (() => {
     objects.map((e) => e.position.set(tile.x, 0, tile.z));
     objects[1].isAiming = false;
     objects[1].health = 2;
+    objects[1].isDone = false;
 
     return objects;
   })();

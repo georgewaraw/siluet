@@ -2,7 +2,7 @@ export default (() => {
   let act;
 
   return (TWEEN, players, tiles, gun, listener, THREE, cameras, playSound, audioAnalyser, enemies, getRandomNumber,
-    border, canvas, getShader, ammo, raycaster, scenes) => act = (!TWEEN) ? act : (() => {
+    end, border, canvas, getShader, ammo, raycaster, scenes) => act = (!TWEEN) ? act : (() => {
     let acting;
 
     const animate = (object, destination, duration) => {
@@ -43,20 +43,40 @@ export default (() => {
     let looking = 'center',
       index = 0,
       directions = ['north', 'east', 'south', 'west'],
-      ammoCount = ammo.length-1;
+      ammoCount = ammo.length-1,
+      enemiesLeft = 5;
 
     const animateGun = new TWEEN.Tween(gun.children[0].position)
       .to({ z: [0.1, 0] }, 375)
       .easing(TWEEN.Easing.Quadratic.InOut);
 
+    let gameOver = false;
+
+    const endGame = () => {
+      if (!gameOver) {
+        players[1].isDone = true;
+
+        players[1].add(end);
+        players[1].remove(gun);
+
+        animate(border, { value: canvas.clientHeight*14/15 }, 500);
+        animate(cameras[0].position, { y: 4 }, 500);
+      }
+      gameOver = true;
+    };
+
     return (action, direction) => {
       if (action === 'initialize') {
         players[1].remove(players[1].getObjectByName('title'));
+        players[1].add(gun);
 
         listener(THREE, cameras[1]);
         const sound = playSound('music', THREE, listener(), true);
         audioAnalyser(THREE, sound);
-      } else if (!acting) {
+
+        animate(border, { value: canvas.clientHeight/15 }, 500);
+        animate(cameras[0].position, { y: 20 }, 500);
+      } else if (!acting && !players[1].isDone) {
         if (action === 'look') {
           if (direction === 'left' && looking === 'center') {
             looking = 'left';
@@ -93,7 +113,7 @@ export default (() => {
               if (e[1].position.x === players[1].position.x && e[1].position.z === players[1].position.z) {
                 --players[1].health;
                 players[0].children[0].material.opacity -= 0.375;
-                if (!players[1].health) console.log('Game over!');
+                if (!players[1].health) endGame();
               }
 
             }
@@ -139,6 +159,7 @@ export default (() => {
                     scenes[1].remove(e[1]);
                     scenes[0].remove(e[0]);
                     scenes[0].add(e[1]);
+                    if (!--enemiesLeft) endGame();
                   }
                 }
               }
