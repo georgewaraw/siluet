@@ -1,183 +1,33 @@
-import * as THREE from 'three';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import TWEEN from 'es6-tween';
+import { getColor } from './Utilities.js';
+import {
+  renderer,
+  scenes,
+  cameras
+} from './Game.js';
+import { players } from './Players.js';
+import { title } from './Title.js';
+import { sea } from './Sea.js';
+import { sky } from './Sky.js';
+import { floor } from './Floor.js';
+import { columns } from './Columns.js';
+import { rectangle } from './Rectangle.js';
+import { enemies } from './Enemies.js';
+import { gun } from './Gun.js';
+import { ammo } from './Ammo.js';
+import './Events.js';
+import { render } from './Render.js';
 
-import * as Constants from './Constants.js';
-import * as Utilities from './Utilities.js';
-import Players from './Players.js';
-import Game from './Game.js';
-import Title from './Title.js';
-import End from './End.js';
-import Sea from './Sea.js';
-import Sky from './Sky.js';
-import Floor from './Floor.js';
-import Columns from './Columns.js';
-import Shape from './Shape.js';
-import Enemies from './Enemies.js';
-import Gun from './Gun.js';
-import Ammo from './Ammo.js';
-import Act from './Act.js';
-import Events from './Events.js';
-import Render from './Render.js';
+document.body.style.background = getColor('bright');
 
-Utilities.getColor('dark', Constants.HUES[0]);
-Utilities.getColor('normal', Constants.HUES[0]);
-Utilities.getColor('bright', Constants.HUES[0]);
-const setShader = (values, material, name) =>
-  Utilities.shader.set(Constants.VERTEX_SHADER, Constants.UNIFORMS, values, material, name);
+players.map((e, i) => scenes[i].add(e));
+cameras.map((e, i) => players[i].add(e));
+title.then((title) => players[1].add(title));
+sea.map((e, i) => scenes[i].add(e));
+sky.map((e, i) => scenes[i].add(e));
+floor.map((e, i) => scenes[i].add(e));
+columns.map((e, i) => scenes[i].add(e));
+rectangle.map((e, i) => scenes[i].add(e));
+enemies.then((enemies) => enemies.map((e) => e.map((e, i) => scenes[i].add(e))));
+ammo.then((ammo) => gun.then((gun) => gun.add(ammo[9])));
 
-document.body.style.background = Utilities.getColor('bright');
-
-Game.renderer(THREE, Constants.CANVAS);
-Game.scenes(THREE, Utilities.getColor('bright'));
-Players(
-  THREE,
-  setShader,
-  Utilities.getColor('dark'),
-  Utilities.getTiles(Constants.MAP, 'P')[0]
-).map((e, i) => Game.scenes()[i].add(e));
-Game.cameras(THREE, Constants.CANVAS).map((e, i) => Players()[i].add(e));
-Game.raycaster(THREE);
-Game.border('down', Constants.CANVAS.clientHeight*14/15);
-
-Utilities.getFont(THREE, 'Bender_Regular').then((f) => {
-  Players()[1].add(Title(
-    THREE,
-    f,
-    setShader,
-    Utilities.getColor()
-  ));
-
-  End(
-    THREE,
-    f,
-    setShader,
-    Utilities.getColor()
-  );
-
-  Sea(
-    THREE,
-    Utilities.getRandomNumber,
-    Constants.MAP_SIZE,
-    setShader,
-    Utilities.getColor('dark'),
-    Utilities.getTexture(THREE, 'blue_dark')
-  ).map((e, i) => Game.scenes()[i].add(e));
-
-  Sky(
-    THREE,
-    Utilities.getRandomNumber,
-    Constants.MAP_SIZE,
-    setShader,
-    Utilities.getColor('dark'),
-    Utilities.getTexture(THREE, 'blue_light'),
-    Utilities.getNextNumber()
-  ).map((e, i) => Game.scenes()[i].add(e));
-
-  Floor(
-    THREE,
-    Utilities.getTiles(Constants.MAP, 'F').concat(Utilities.getTiles(Constants.MAP, 'E')),
-    setShader,
-    Utilities.getColor('dark'),
-    Utilities.getTexture(THREE, 'grey'),
-    Utilities.getNextNumber()
-  ).map((e, i) => Game.scenes()[i].add(e));
-
-  Columns(
-    THREE,
-    Utilities.getTiles(Constants.MAP, 'C'),
-    Utilities.getRandomNumber,
-    setShader,
-    Utilities.getColor('dark'),
-    Utilities.getTexture(THREE, 'grey')
-  ).map((e, i) => Game.scenes()[i].add(e));
-
-  Shape(
-    THREE,
-    Utilities.getTiles(Constants.MAP, 'S'),
-    setShader,
-    Utilities.getColor('dark'),
-    Utilities.getTexture(THREE, 'mix'),
-    Utilities.getNextNumber()
-  ).map((e, i) => Game.scenes()[i].add(e));
-
-  Utilities.getSTL(STLLoader, 'enemy').then((geometry) => {
-    Enemies(
-      THREE,
-      Constants.ENEMY_COUNT,
-      geometry.scale(0.05, 0.05, 0.05),
-      setShader,
-      Utilities.getRandomNumber,
-      Utilities.getColor('dark'),
-      Utilities.getTexture(THREE, 'grey'),
-      [...Utilities.getTiles(Constants.MAP, 'E')]
-    ).map((e) => e.map((e, i) => {
-      if (i) e.rotation.y = Utilities.getRandomNumber(0, 5)*72;
-      Game.scenes()[i].add(e);
-    }));
-
-    Gun(
-      THREE,
-      setShader,
-      [Utilities.getTexture(THREE, 'grey'), Utilities.getTexture(THREE, 'blue_light')]
-    );
-
-    Utilities.getFont(THREE, 'Pomeranian_Regular').then((f) => {
-      Gun().add(Ammo(
-        THREE,
-        f,
-        setShader,
-        Utilities.getColor()
-      )[9]);
-
-      Act(
-        TWEEN,
-        Players(),
-        Utilities.getTiles(Constants.MAP, 'F').concat(Utilities.getTiles(Constants.MAP, 'E')),
-        Gun(),
-        Game.listener,
-        THREE,
-        Game.cameras(),
-        Utilities.playSound,
-        Game.audioAnalyser,
-        Enemies(),
-        Utilities.getRandomNumber,
-        End(),
-        Game.border(),
-        Constants.CANVAS,
-        Utilities.shader.get,
-        Ammo(),
-        Game.raycaster(),
-        Game.scenes()
-      );
-
-      Events(
-        Constants.CANVAS,
-        Game.cameras(),
-        Game.renderer(),
-        Game.border(),
-        Players()[1],
-        Act(),
-        Gun()
-      );
-    });
-
-    Render(
-      THREE,
-      TWEEN,
-      Game.audioAnalyser,
-      Utilities.getMappedNumber,
-      Utilities.shader.get,
-      Game.raycaster(),
-      Gun(),
-      Enemies(),
-      [...Array(5)].map(() => Utilities.getRandomNumber(5, 10)),
-      Game.renderer(),
-      Constants.CANVAS,
-      Game.border(),
-      Game.scenes(),
-      Game.cameras()
-    );
-    Game.renderer().setAnimationLoop(Render());
-  });
-});
+renderer.setAnimationLoop(render);

@@ -1,5 +1,5 @@
 import {
-  PlaneGeometry,
+  BoxGeometry,
   Geometry,
   EdgesGeometry,
   MeshBasicMaterial,
@@ -14,13 +14,12 @@ import {
 import { setShader } from './Shader.js';
 import { getLocations } from './Map.js';
 
-const floorInitials = { uDistort: 0 };
+const rectangleInitials = { uDistort: 10 };
 
-const geometry = getLocations('F').concat(getLocations('E'), getLocations('P')).reduce((a, e) => {
+const geometry = getLocations('S').reduce((a, e) => {
 
-  const geometry = new PlaneGeometry(5, 5);
-  geometry.rotateX(270*Math.PI/180);
-  geometry.translate(e.x, -7.5, e.z);
+  const geometry = new BoxGeometry(5, 10, 5);
+  geometry.translate(e.x, 2.5, e.z);
   a.merge(geometry);
 
   return a;
@@ -29,23 +28,24 @@ const geometry = getLocations('F').concat(getLocations('E'), getLocations('P')).
 const values = {
   uTime: 0,
   uSpeed: 0.375,
-  uMorph: 20,
-  uDistort: floorInitials.uDistort
+  uMorph: 50,
+  uDistort: rectangleInitials.uDistort
 };
 const materials = [
   setShader(
     values,
     new MeshBasicMaterial({ color: getColor('dark') }),
-    'floor_colored'
+    'rectangle_colored'
   ),
   setShader(
     values,
     new MeshBasicMaterial({
+      depthWrite: false,
       transparent: true,
       opacity: 0.5,
-      map: getTexture('grey')
+      map: getTexture('mix')
     }),
-    'floor_textured'
+    'rectangle_textured'
   )
 ];
 
@@ -56,6 +56,6 @@ const objects = [
 objects[1].renderOrder = getLesserNumber();
 
 export {
-  objects as floor,
-  floorInitials
+  objects as rectangle,
+  rectangleInitials
 };

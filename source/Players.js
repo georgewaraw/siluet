@@ -1,28 +1,45 @@
-export default (() => {
-  let players;
+import {
+  PlaneBufferGeometry,
+  MeshBasicMaterial,
+  Mesh,
+  Group
+} from 'three';
+import { getColor } from './Utilities.js';
+import { setShader } from './Shader.js';
+import { getLocations } from './Map.js';
 
-  return (THREE, setShader, color, tile) => players = (!THREE) ? players : (() => {
-    const geometry = new THREE.PlaneBufferGeometry(3, 3);
+const playersProperties = {
+  health: 2,
+  isAiming: false
+};
 
-    const material = setShader(
-      { uTime: 0, uSpeed: 0.25, uMorph: 12.5, uDistort: 0.125 },
-      new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, transparent: true, opacity: 0.75, color }),
-      'players'
-    );
+const geometry = new PlaneBufferGeometry(3, 3);
+geometry.rotateX(270*Math.PI/180);
 
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.rotation.set(270*Math.PI/180, 0, 0);
+const material = setShader(
+  {
+    uTime: 0,
+    uSpeed: 0.25,
+    uMorph: 12.5,
+    uDistort: 0.125
+  },
+  new MeshBasicMaterial({
+    transparent: true,
+    opacity: 0.75,
+    color: getColor('dark')
+  }),
+  'player'
+);
 
-    const objects = [
-      new THREE.Group(),
-      new THREE.Group()
-    ];
-    objects[0].add(mesh);
-    objects.map((e) => e.position.set(tile.x, 0, tile.z));
-    objects[1].isAiming = false;
-    objects[1].health = 2;
-    objects[1].isDone = false;
+const objects = [
+  new Group(),
+  new Group()
+];
+const location = getLocations('P')[0];
+objects.map((e) => e.position.set(location.x, 0, location.z));
+objects[0].add(new Mesh(geometry, material));
 
-    return objects;
-  })();
-})();
+export {
+  objects as players,
+  playersProperties
+};

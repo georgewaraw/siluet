@@ -1,28 +1,69 @@
-export default (() => {
-  let gun;
+import {
+  Vector3,
+  EdgesGeometry,
+  MeshBasicMaterial,
+  Mesh,
+  Group
+} from 'three';
+import {
+  getModel,
+  getColor
+} from './Utilities.js';
+import { setShader } from './Shader.js';
 
-  return (THREE, setShader, textures) => gun = (!THREE) ? gun : (() => {
-    const geometries = [
-      new THREE.BoxBufferGeometry(0.2, 0.4, 0.8),
-      new THREE.BoxBufferGeometry(0.175, 0.2, 0.175)
-    ];
+const gunInitials = {
+  uMorph: 3.75,
+  position: new Vector3(0.1, -0.25, -1)
+};
 
-    const materials = [
-      setShader({ uTime: 0, uSpeed: 0.25, uMorph: 7.5, uDistort: 0.025 },
-        new THREE.MeshBasicMaterial({ transparent: false, opacity: 0.5, map: textures[0] }), 'gun_top'),
-      setShader({ uTime: 0, uSpeed: 0.375, uMorph: 5, uDistort: 0.01 },
-        new THREE.MeshBasicMaterial({ transparent: false, opacity: 0.5, map: textures[1] }), 'gun_bottom')
-    ];
+const gun = new Promise((r) => r(getModel('gun').then((geometry) => {
 
-    const object = new THREE.Group();
-    object.initials = {
-      position: new THREE.Vector3(0, -0.75, -3)
-    };
-    object.position.copy(object.initials.position);
-    object.add(new THREE.Mesh(geometries[0], materials[0]));
-    object.add(new THREE.Mesh(geometries[1], materials[1]));
-    object.children[1].position.set(0, -0.3, 0.3);
+  geometry.scale(0.0025, 0.0025, 0.0025);
+  geometry.rotateX(270*Math.PI/180);
+  geometry.rotateY(120*Math.PI/180);
+  geometry.rotateZ(60*Math.PI/180);
 
-    return object;
-  })();
-})();
+  const materials = [
+    setShader(
+      {
+        uTime: 0,
+        uSpeed: 0.25,
+        uMorph: gunInitials.uMorph,
+        uDistort: 0.0125
+      },
+      new MeshBasicMaterial({
+        transparent: true,
+        opacity: 0.75,
+        color: getColor()
+      }),
+      'gun_inner'
+    ),
+    setShader(
+      {
+        uTime: 0,
+        uSpeed: 0.125,
+        uMorph: 7.5,
+        uDistort: 0.025
+      },
+      new MeshBasicMaterial({
+        depthWrite: false,
+        transparent: true,
+        opacity: 0.125,
+        color: getColor('bright')
+      }),
+      'gun_outer'
+    )
+  ];
+
+  const object = new Group();
+  object.add(new Mesh(geometry, materials[0]));
+  object.add(new Mesh(new EdgesGeometry(geometry), materials[1]));
+  object.position.copy(gunInitials.position);
+
+  return object;
+})));
+
+export {
+  gun,
+  gunInitials
+};

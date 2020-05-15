@@ -1,65 +1,62 @@
-export default Object.freeze({
-  renderer: (() => {
-    let renderer;
+import {
+  Vector3,
+  Color,
+  WebGLRenderer,
+  Scene,
+  FogExp2,
+  PerspectiveCamera,
+  Raycaster
+} from 'three';
+import {
+  times,
+  getColor
+} from './Utilities.js';
 
-    return (THREE, canvas) => renderer = (!THREE) ? renderer : (() => {
-      const renderer = new THREE.WebGLRenderer({ canvas });
-      renderer.setPixelRatio(0.15);
-      renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-      renderer.setScissorTest(true);
+const gameProperties = { state: 'uninitialized' };
 
-      return renderer;
-    })();
-  })(),
-  scenes: (() => {
-    let scenes;
+const canvas = document.querySelector('canvas');
 
-    return (THREE, color) => scenes = (!THREE) ? scenes : [...Array(2)].map(() => {
-      const scene = new THREE.Scene();
-      scene.background = new THREE.Color(color);
-      scene.fog = new THREE.FogExp2(color, 0.05);
+const width = canvas.clientWidth,
+  height = canvas.clientHeight,
+  color = getColor('bright');
 
-      return scene;
-    });
-  })(),
-  cameras: (() => {
-    let cameras;
+const renderer = new WebGLRenderer({ canvas });
+renderer.setPixelRatio(0.25);
+renderer.setSize(width, height);
+renderer.setScissorTest(true);
 
-    return (THREE, canvas) => cameras = (!THREE) ? cameras : [...Array(2)].map((_, i) => {
-      const camera = new THREE.PerspectiveCamera(60, canvas.clientWidth/canvas.clientHeight, 0.1, 1000);
-      if (!i) {
-        camera.rotation.set(270*Math.PI/180, 0, 0);
-      }
+const scenes = times(2, () => {
 
-      return camera;
-    });
-  })(),
+  const scene = new Scene();
+  scene.background = new Color(color);
+  scene.fog = new FogExp2(color, 0.05);
 
-  raycaster: (() => {
-    let raycaster;
-
-    return (THREE) => raycaster = (!THREE) ? raycaster : new THREE.Raycaster();
-  })(),
-
-  border: (() => {
-    let border;
-
-    return (position, value) => border = (!position) ? border : { position, value };
-  })(),
-
-  listener: (() => {
-    let listener;
-
-    return (THREE, camera) => listener = (!THREE) ? listener : (() => {
-      const listener = new THREE.AudioListener();
-      camera.add(listener);
-
-      return listener;
-    })();
-  })(),
-  audioAnalyser: (() => {
-    let audioAnalyser;
-
-    return (THREE, sound) => audioAnalyser = (!THREE) ? audioAnalyser : new THREE.AudioAnalyser(sound);
-  })()
+  return scene;
 });
+
+const camerasInitials = { position: new Vector3(0, 4, 0) };
+
+const cameras = [
+  new PerspectiveCamera(90, width/height, 0.1, 1000),
+  new PerspectiveCamera(60, width/height, 0.1, 1000)
+];
+cameras[0].position.copy(camerasInitials.position);
+cameras[0].rotateX(270*Math.PI/180);
+
+const border = {
+  position: 'up',
+  value: height*14/15
+};
+
+const raycaster = new Raycaster();
+
+export {
+  canvas,
+  renderer,
+  scenes,
+  cameras,
+  camerasInitials,
+  border,
+  raycaster,
+  gameProperties,
+};

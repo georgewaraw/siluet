@@ -1,21 +1,55 @@
-export default (() => {
-  let title;
+import {
+  TextBufferGeometry,
+  EdgesGeometry,
+  MeshBasicMaterial,
+  LineSegments,
+  Mesh,
+  Group
+} from 'three';
+import {
+  getFont,
+  getColor
+} from './Utilities.js';
+import { setShader } from './Shader.js'
 
-  return (THREE, font, setShader, color) => title = (!THREE) ? title : (() => {
-    const geometry = new THREE.EdgesGeometry(new THREE.TextBufferGeometry('СИЛУЭТ', { font, size: 0.1, height: 0.01 }));
+const title = new Promise((r) => r(getFont('Bender_Regular').then((font) => {
 
-    const values = { uTime: 0, uSpeed: 0.375, uMorph: 0.125, uDistort: 0.025 };
-    const materials = [
-      setShader(values, new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.5, color }), 'text_inner'),
-      setShader(values, new THREE.MeshBasicMaterial({ color }), 'text_outer')
-    ];
+  const geometry = new EdgesGeometry(new TextBufferGeometry('СИЛУЭТ', {
+    font,
+    size: 0.1,
+    height: 0.01
+  }));
 
-    const object = new THREE.Group();
-    object.name = 'title';
-    object.position.set(-0.25, 0, -1);
-    object.add(new THREE.Mesh(geometry, materials[0]));
-    object.add(new THREE.LineSegments(geometry, materials[1]));
+  const values = {
+      uTime: 0,
+      uSpeed: 0.375,
+      uMorph: 0.125,
+      uDistort: 0.025
+    },
+    color = getColor();
+  const materials = [
+    setShader(
+      values,
+      new MeshBasicMaterial({
+        transparent: true,
+        opacity: 0.5,
+        color
+      }),
+      'text_inner'
+    ),
+    setShader(
+      values,
+      new MeshBasicMaterial({ color }),
+      'text_outer'
+    )
+  ];
 
-    return object;
-  })();
-})();
+  const object = new Group();
+  object.position.set(-0.25, 0, -1);
+  object.add(new Mesh(geometry, materials[0]));
+  object.add(new LineSegments(geometry, materials[1]));
+
+  return object;
+})));
+
+export { title };

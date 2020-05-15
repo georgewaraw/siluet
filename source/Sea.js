@@ -1,24 +1,60 @@
-export default (() => {
-  let sea;
+import {
+  Vector3,
+  BufferGeometry,
+  PointsMaterial,
+  Points
+} from 'three';
+import {
+  times,
+  getRandomNumber,
+  getColor,
+  getTexture
+} from './Utilities.js';
+import { setShader } from './Shader.js';
+import { size } from './Map.js';
 
-  return (THREE, getRandomNumber, size, setShader, color, texture) => sea = (!THREE) ? sea : (() => {
-    const geometry = new THREE.BufferGeometry().setFromPoints([...Array(15000)].map(() =>
-      new THREE.Vector3(getRandomNumber(-size, size), getRandomNumber(-10, -6.5), getRandomNumber(-size, size))));
+const seaInitials = { uDistort: 2.5 };
 
-    const values = { uTime: 0, uSpeed: 0.125, uMorph: 200, uDistort: 2.5 };
-    const materials = [
-      setShader(values, new THREE.PointsMaterial({ size: 5, transparent: true, opacity: 0.125, color }), 'sea_colored'),
-      setShader(values, new THREE.PointsMaterial({ size: 5, transparent: true, opacity: 0.125, map: texture }),
-        'sea_textured')
-    ];
+const geometry = new BufferGeometry().setFromPoints(times(size*150, () =>
+  new Vector3(getRandomNumber(-size, size), getRandomNumber(-15, -11), getRandomNumber(-size, size))));
 
-    const objects = [
-      new THREE.Points(geometry, materials[0]),
-      new THREE.Points(geometry, materials[1])
-    ];
-    // +X: m\ W, +Z: m\ S
-    objects.map((e) => e.position.set(size/3, 0, size/3));
+const values = {
+  uTime: 0,
+  uSpeed: 0.125,
+  uMorph: 200,
+  uDistort: seaInitials.uDistort
+};
+const materials = [
+  setShader(
+    values,
+    new PointsMaterial({
+      size: 5,
+      transparent: true,
+      opacity: 0.125,
+      color: getColor('dark')
+    }),
+    'sea_colored'
+  ),
+  setShader(
+    values,
+    new PointsMaterial({
+      size: 5,
+      transparent: true,
+      opacity: 0.125,
+      map: getTexture('blue')
+    }),
+    'sea_textured'
+  )
+];
 
-    return objects;
-  })();
-})();
+const objects = [
+  new Points(geometry, materials[0]),
+  new Points(geometry, materials[1])
+];
+// increasing X moves West, increasing Z moves South
+objects.map((e) => e.position.set(size/3, 0, size/3));
+
+export {
+  objects as sea,
+  seaInitials
+};

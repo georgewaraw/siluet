@@ -278,6 +278,17 @@
 		"oAP": "/build/assets",
 		"oF": 0
 		},
+	"/source/Audio.js": {
+		"bF": 0,
+		"ft": 64,
+		"ma": 0,
+		"mi": 1,
+		"oA": 1,
+		"oAP": "/source/Audio-min.js",
+		"oF": 0,
+		"sC": 3,
+		"tS": 0
+		},
 	"/source/Columns.js": {
 		"bF": 0,
 		"ft": 64,
@@ -285,17 +296,6 @@
 		"mi": 1,
 		"oA": 1,
 		"oAP": "/source/Columns-min.js",
-		"oF": 1,
-		"sC": 3,
-		"tS": 0
-		},
-	"/source/Constants.js": {
-		"bF": 0,
-		"ft": 64,
-		"ma": 0,
-		"mi": 1,
-		"oA": 1,
-		"oAP": "/source/Constants-min.js",
 		"oF": 1,
 		"sC": 3,
 		"tS": 0
@@ -395,6 +395,17 @@
 		"sC": 3,
 		"tS": 1
 		},
+	"/source/Map.js": {
+		"bF": 0,
+		"ft": 64,
+		"ma": 0,
+		"mi": 1,
+		"oA": 1,
+		"oAP": "/source/Map-min.js",
+		"oF": 1,
+		"sC": 3,
+		"tS": 0
+		},
 	"/source/Players.js": {
 		"bF": 0,
 		"ft": 64,
@@ -402,6 +413,17 @@
 		"mi": 1,
 		"oA": 1,
 		"oAP": "/source/Players-min.js",
+		"oF": 1,
+		"sC": 3,
+		"tS": 0
+		},
+	"/source/Rectangle.js": {
+		"bF": 0,
+		"ft": 64,
+		"ma": 0,
+		"mi": 1,
+		"oA": 1,
+		"oAP": "/source/Rectangle-min.js",
 		"oF": 1,
 		"sC": 3,
 		"tS": 0
@@ -428,13 +450,13 @@
 		"sC": 3,
 		"tS": 0
 		},
-	"/source/Shape.js": {
+	"/source/Shader.js": {
 		"bF": 0,
 		"ft": 64,
 		"ma": 0,
 		"mi": 1,
 		"oA": 1,
-		"oAP": "/source/Shape-min.js",
+		"oAP": "/source/Shader-min.js",
 		"oF": 1,
 		"sC": 3,
 		"tS": 0
@@ -921,7 +943,7 @@
 	"environmentVariablesString": "NODE_ENV:::production",
 	"esLintConfigFileHandlingType": 0,
 	"esLintECMAVersion": 7,
-	"esLintEnvironmentsMask": 1,
+	"esLintEnvironmentsMask": 17,
 	"esLintRules": {
 		"accessor-pairs": {
 			"active": 0,
@@ -1232,7 +1254,7 @@
 			"optionString": ""
 			},
 		"no-cond-assign": {
-			"active": 1,
+			"active": 0,
 			"optionString": "'except-parens'"
 			},
 		"no-confusing-arrow": {
