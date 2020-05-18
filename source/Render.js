@@ -35,15 +35,15 @@ const render = (t) => {
   if (audio.analyser) {
     const amplitude = audio.analyser.getAverageFrequency();
     if (shader = getShader('sea_textured')) shader.uniforms.uDistort.value =
-      getMappedNumber(amplitude, ...range, seaInitials.uDistort, seaInitials.uDistort*2);
+      getMappedNumber(amplitude, ...range, seaInitials.uDistort, seaInitials.uDistort*2.25);
     if (shader = getShader('sky_textured')) shader.uniforms.uDistort.value =
-      getMappedNumber(amplitude, ...range, skyInitials.uDistort, skyInitials.uDistort*2);
+      getMappedNumber(amplitude, ...range, skyInitials.uDistort, skyInitials.uDistort*2.25);
     if (shader = getShader('floor_textured')) shader.uniforms.uDistort.value =
-      getMappedNumber(amplitude, ...range, floorInitials.uDistort, floorInitials.uDistort+2);
+      getMappedNumber(amplitude, ...range, floorInitials.uDistort, floorInitials.uDistort+2.25);
     if (shader = getShader('columns_textured')) shader.uniforms.uDistort.value =
-      getMappedNumber(amplitude, ...range, columnsInitials.uDistort, columnsInitials.uDistort*4);
+      getMappedNumber(amplitude, ...range, columnsInitials.uDistort, columnsInitials.uDistort*4.5);
     if (shader = getShader('rectangle_textured')) shader.uniforms.uDistort.value =
-      getMappedNumber(amplitude, ...range, rectangleInitials.uDistort, rectangleInitials.uDistort*2);
+      getMappedNumber(amplitude, ...range, rectangleInitials.uDistort, rectangleInitials.uDistort*2.25);
   }
 
   enemies.then((enemies) => enemies.map((e, i) => {
