@@ -18,6 +18,6 @@
   "homepage": "https://github.com/georgewaraw/siluet#readme",
   "devDependencies": {
     "es6-tween": "^5.5.11",
-    "three": "^0.115.0"
+    "three": "^0.125.0"
   }
 }
